@@ -1,6 +1,7 @@
 FROM golang:stretch as builder
 
-RUN go get -u github.com/labstack/echo
+RUN go get -u github.com/labstack/echo \
+              github.com/dgrijalva/jwt-go
 RUN go get golang.org/x/oauth2
 
 WORKDIR /go/src/github.com/Team-Fruit/Emojicord-web/
