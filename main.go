@@ -1,12 +1,14 @@
-package main
+gackage main
 
 import (
-	"fmt"
 	"os"
+	"net/http"
+	"time"
 	"math/rand"
 	"context"
 	"io/ioutil"
 	"encoding/json"
+	"encoding/base64"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -24,6 +26,8 @@ func main() {
 
 	e.Logger.Fatal(e.Start(":8082"))
 }
+
+const cookieName = "discordOAuth2State"
 
 type Guild struct {
 	Owner       bool   `json:"owner"`
@@ -49,17 +53,39 @@ func GetConfig() *oauth2.Config {
 func index(c echo.Context) error {
 	config := GetConfig()
 
-	stateBytes := make([]byte, 16)
-	_, err := rand.Read(stateBytes)
+	state, err := generateState()
 	if err != nil {
 		return err
 	}
-	state := fmt.Sprintf("%x", stateBytes)
+
+	cookie := &http.Cookie{
+		Name:     cookieName,
+		Value:    state,
+		Path:     "/",
+		Expires:  time.Now().Add(10 * time.Minute),
+		Secure:   true,
+		HttpOnly: true,
+	}
+	c.SetCookie(cookie)
+
 	url := config.AuthCodeURL(state, oauth2.SetAuthURLParam("response_type", "code"))
 	return c.Redirect(302, url)
 }
 
 func callback(c echo.Context) error {
+	cookieState, err := c.Cookie(cookieName)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Failed to read Cookie")
+	}
+	paramState := c.QueryParam("state")
+	if cookieState.Value != paramState {
+		return echo.NewHTTPError(http.StatusBadRequest, "OAuth2 State Error")
+	}
+
+	if e := c.QueryParam("error"); e != "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, c.QueryParam("error_description"))
+	}
+
 	config := GetConfig()
 	token, err := config.Exchange(context.Background(), c.QueryParam("code"))
 	if err != nil {
@@ -78,10 +104,17 @@ func callback(c echo.Context) error {
 		return err
 	}
 	
-	fmt.Println(string(body))
 	var guilds []Guild
 	if err := json.Unmarshal(body, &guilds); err != nil {
 		return err;
 	}
 	return c.JSON(200, guilds)
+}
+
+func generateState() (string, error) {
+	b := make([]byte, 64)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(b), nil
 }
