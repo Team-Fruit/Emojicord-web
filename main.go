@@ -1,4 +1,4 @@
-gackage main
+package main
 
 import (
 	"os"
@@ -69,7 +69,7 @@ func index(c echo.Context) error {
 	c.SetCookie(cookie)
 
 	url := config.AuthCodeURL(state, oauth2.SetAuthURLParam("response_type", "code"))
-	return c.Redirect(302, url)
+	return c.Redirect(http.StatusFound, url)
 }
 
 func callback(c echo.Context) error {
@@ -108,7 +108,7 @@ func callback(c echo.Context) error {
 	if err := json.Unmarshal(body, &guilds); err != nil {
 		return err;
 	}
-	return c.JSON(200, guilds)
+	return c.JSON(http.StatusOK, guilds)
 }
 
 func generateState() (string, error) {
