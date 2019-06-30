@@ -1,0 +1,30 @@
+version: '3'
+services:
+    web:
+        build: ./web
+        expose:
+            - '8082'
+        environment:
+            ALIAS: '/'
+            PORT: '8082'
+            CLIENT_ID: $CLIENT_ID
+            CLIENT_SECRET: $CLIENT_SECRET
+        depends_on:
+            - db
+        restart: always
+    db:
+        build: ./db
+        expose:
+            - '3306'
+        volumes:
+            - db:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 'password'
+        restart: always
+volumes:
+    db:
+
+networks:
+    default:
+        external:
+            name: nginx_reverse_proxy
