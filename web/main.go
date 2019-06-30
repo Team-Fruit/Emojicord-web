@@ -46,7 +46,7 @@ func GetConfig() *oauth2.Config {
 			TokenURL: "https://discordapp.com/api/oauth2/token",
 		},
 		Scopes:       []string{"identify", "guilds"},
-		RedirectURL:  "https://emojicord.teamfruit.net/callback",
+		RedirectURL:  "https://emojicord.teamfruit.net/api/callback",
 	}
 }
 
