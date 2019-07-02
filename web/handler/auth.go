@@ -53,7 +53,7 @@ func GetConfig() *oauth2.Config {
 			TokenURL: "https://discordapp.com/api/oauth2/token",
 		},
 		Scopes:       []string{"identify", "guilds"},
-		RedirectURL:  "https://emojicord.teamfruit.net/api/callback",
+		RedirectURL:  os.Getenv("REDIRECT_URL"),
 	}
 }
 
@@ -140,7 +140,7 @@ func (h *handler) Callback(c echo.Context) error {
 		return err
 	}
 
-	return c.String(http.StatusOK, s)
+	return c.Redirect(http.StatusSeeOther, os.Getenv("LOGIN_URL") + "?token=" + s)
 }
 
 func generateState() (string, error) {
