@@ -1,7 +1,8 @@
 FROM golang:stretch as builder
 
 RUN go get -u github.com/labstack/echo \
-              github.com/dgrijalva/jwt-go
+              github.com/dgrijalva/jwt-go \
+              github.com/go-sql-driver/mysql
 RUN go get golang.org/x/oauth2 \
            github.com/jmoiron/sqlx
 
