@@ -2,7 +2,8 @@ FROM golang:stretch as builder
 
 RUN go get -u github.com/labstack/echo \
               github.com/dgrijalva/jwt-go
-RUN go get golang.org/x/oauth2
+RUN go get golang.org/x/oauth2 \
+           github.com/jmoiron/sqlx
 
 WORKDIR /go/src/github.com/Team-Fruit/Emojicord-web/web/
 COPY . .

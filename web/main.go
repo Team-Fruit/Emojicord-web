@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/jmoiron/sqlx"
+	
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
@@ -8,6 +10,9 @@ import (
 )
 
 func main() {
+	db := sqlx.MustConnect("mysql", "emojicord:@tcp(db:3306)/emojicord_db")
+	defer db.Close()
+
 	e := echo.New()
 
 	e.Use(middleware.Logger())
