@@ -6,7 +6,7 @@ import (
 
 
 type (
-	Model struct {
+	model struct {
 		db *sqlx.DB
 	}
 
@@ -15,8 +15,8 @@ type (
 	}
 )
 
-func NewModel(db *sqlx.DB) *Model {
-	return &Model{
+func NewModel(db *sqlx.DB) *model {
+	return &model{
 		db: db,
 	}
 }

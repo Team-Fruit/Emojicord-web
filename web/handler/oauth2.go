@@ -57,7 +57,7 @@ func GetConfig() *oauth2.Config {
 	}
 }
 
-func Auth(c echo.Context) error {
+func (h *handler) Auth(c echo.Context) error {
 	config := GetConfig()
 
 	state, err := generateState()
@@ -79,7 +79,7 @@ func Auth(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, url)
 }
 
-func Callback(c echo.Context) error {
+func (h *handler) Callback(c echo.Context) error {
 	cookieState, err := c.Cookie(cookieName)
 	if err != nil {
 		return err
