@@ -12,16 +12,36 @@ import (
 
 	"github.com/labstack/echo"
 	"golang.org/x/oauth2"
+	"github.com/dgrijalva/jwt-go"
 )
 
 const cookieName = "discordOAuth2State"
 
-type Guild struct {
-	Owner       bool   `json:"owner"`
-	Permissions int    `json:"permissions"`
-	Icon        string `json:"icon"`
-	ID          string `json:"id"`
-	Name        string `json:"name"`
+// type Guild struct {
+// 	Owner       bool   `json:"owner"`
+// 	Permissions int    `json:"permissions"`
+// 	Icon        string `json:"icon"`
+// 	ID          string `json:"id"`
+// 	Name        string `json:"name"`
+// }
+
+type JWTClaims struct {
+	Username      string `json:"username"`
+	Locale        string `json:"locale"`
+	Avater        string `json:"avater"`
+	Discriminator string `json:"discriminator"`
+	ID            string `json:"id"`
+	jwt.StandardClaims
+}
+
+type User struct {
+	Username      string `json:"username"`
+	Locale        string `json:"locale"`
+	MfaEnabled    bool   `json:"mfa_enabled"`
+	Flags         int    `json:"flags"`
+	Avatar        string `json:"avatar"`
+	Discriminator string `json:"discriminator"`
+	ID            string `json:"id"`
 }
 
 func GetConfig() *oauth2.Config {
@@ -56,17 +76,17 @@ func Auth(c echo.Context) error {
 	c.SetCookie(cookie)
 
 	url := config.AuthCodeURL(state, oauth2.SetAuthURLParam("response_type", "code"))
-	return c.Redirect(http.StatusFound, url)
+	return c.Redirect(http.StatusSeeOther, url)
 }
 
 func Callback(c echo.Context) error {
 	cookieState, err := c.Cookie(cookieName)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Failed to read Cookie")
+		return err
 	}
 	paramState := c.QueryParam("state")
 	if cookieState.Value != paramState {
-		return echo.NewHTTPError(http.StatusBadRequest, "OAuth2 State Error")
+		return err
 	}
 
 	if e := c.QueryParam("error"); e != "" {
@@ -80,7 +100,7 @@ func Callback(c echo.Context) error {
 	}
 
 	client := config.Client(context.Background(), token)
-	res, err := client.Get("https://discordapp.com/api/v6/users/@me/guilds")
+	res, err := client.Get("https://discordapp.com/api/v6/users/@me")
 	if err != nil {
 		return err
 	}
@@ -91,11 +111,36 @@ func Callback(c echo.Context) error {
 		return err
 	}
 	
-	var guilds []Guild
-	if err := json.Unmarshal(body, &guilds); err != nil {
+	// var guilds []Guild
+	// if err := json.Unmarshal(body, &guilds); err != nil {
+	// 	return err;
+	// }
+	// return c.JSON(http.StatusOK, guilds)
+	
+	var user User
+	if err := json.Unmarshal(body, &user); err != nil {
 		return err;
 	}
-	return c.JSON(http.StatusOK, guilds)
+
+	claims := &JWTClaims{
+		user.Username,
+		user.Locale,
+		user.Avatar,
+		user.Discriminator,
+		user.ID,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+		},
+	}
+
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	s, err := t.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		return err
+	}
+
+	return c.String(http.StatusOK, s)
 }
 
 func generateState() (string, error) {
