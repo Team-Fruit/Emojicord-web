@@ -22,8 +22,8 @@ func main() {
 
 	h := handler.NewHandler(model.NewModel(db))
 
-	e.GET("/login", h.Auth)
-	e.GET("/callback", h.Callback)
+	e.GET("/auth/login", h.Auth)
+	e.GET("/auth/callback", h.Callback)
 
 	e.Logger.Fatal(e.Start(":8082"))
 }
