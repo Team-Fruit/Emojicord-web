@@ -14,6 +14,8 @@ import (
 	"github.com/labstack/echo"
 	"golang.org/x/oauth2"
 	"github.com/dgrijalva/jwt-go"
+
+	"github.com/Team-Fruit/Emojicord-web/web/model"
 )
 
 const cookieName = "discordOAuth2State"
@@ -33,14 +35,6 @@ type JWTClaims struct {
 	Discriminator string `json:"discriminator"`
 	ID            string `json:"id"`
 	jwt.StandardClaims
-}
-
-type User struct {
-	Username      string `json:"username"`
-	Locale        string `json:"locale"`
-	Avatar        string `json:"avatar"`
-	Discriminator string `json:"discriminator"`
-	ID            string `json:"id"`
 }
 
 func GetConfig() *oauth2.Config {
@@ -116,7 +110,7 @@ func (h *handler) Callback(c echo.Context) error {
 	// }
 	// return c.JSON(http.StatusOK, guilds)
 	
-	var user User
+	var user model.User
 	if err := json.Unmarshal(body, &user); err != nil {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
