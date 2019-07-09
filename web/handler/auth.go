@@ -115,6 +115,12 @@ func (h *handler) Callback(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
 
+	mt := model.ToModelToken(user.ID, token)
+
+	if err := h.Model.LoginUser(&user, mt); err != nil {
+		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
+	}
+
 	claims := &JWTClaims{
 		user.Username,
 		user.Locale,

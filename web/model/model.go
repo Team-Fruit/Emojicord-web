@@ -11,7 +11,7 @@ type (
 	}
 
 	Database interface {
-
+		LoginUser(user *User, token *Token) (err error)
 	}
 )
 
