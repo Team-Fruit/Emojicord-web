@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users` (
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_tokens` (
     `user_id`          VARCHAR(64)     NOT NULL,
     `access_token`     VARCHAR(255)    NOT NULL,
-    `token_type`       VARCHAR(255)    NOT NULL,
+    `token_type`       VARCHAR(6)      NOT NULL,
     `refresh_token`    VARCHAR(255)    NOT NULL,
     `expiry`           TIMESTAMP       NOT NULL,
 
@@ -27,5 +27,33 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_tokens` (
     CONSTRAINT `fk_users__discord_tokens__users`
         FOREIGN KEY ( `user_id` )
         REFERENCES `emojicord_db`.`users` ( `id` )
+        ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_guilds` (
+    `id`               VARCHAR(64)     NOT NULL,
+    `name`             VARCHAR(100)    NOT NULL,
+    `icon`             VARCHAR(255)    NOT NULL,
+    `is_bot_exists`    BOOLEAN         NOT NULL,
+
+    PRIMARY KEY ( `id` )
+);
+
+CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_guilds` (
+    `user_id`        VARCHAR(64)     NOT NULL,
+    `guild_id`       VARCHAR(64)     NOT NULL,
+    `is_owner`       BOOLEAN         NOT NULL,
+    `permissions`    INT UNSIGNED    NOT NULL,
+    `can_invite`     BOOLEAN         NOT NULL,
+    
+    PRIMARY KEY ( `user_id`, `guild_id` ),
+
+    CONSTRAINT `fk__users__discord_guilds__users`
+        FOREIGN KEY ( `user_id` )
+        REFERENCES `emojicord_db`.`users` ( `id` )
+        ON DELETE CASCADE,
+    CONSTRAINT `fk__users__discord_guilds__discord_guilds`
+        FOREIGN KEY ( `guild_id` )
+        REFERENCES `emojicord_db`.`discord_guilds` ( `id` )
         ON DELETE CASCADE
 );
