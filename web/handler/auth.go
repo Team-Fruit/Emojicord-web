@@ -121,25 +121,12 @@ func (h *handler) Callback(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
 
-	claims := &JWTClaims{
-		user.Username,
-		user.Locale,
-		user.Avatar,
-		user.Discriminator,
-		user.ID,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
-		},
-	}
-
-	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	s, err := t.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	t, err := generateJWT(&user)
 	if err != nil {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
 
-	return c.Redirect(http.StatusSeeOther, os.Getenv("LOGIN_URL") + "?token=" + s)
+	return c.Redirect(http.StatusSeeOther, os.Getenv("LOGIN_URL") + "?token=" + t)
 }
 
 func generateState() (string, error) {
@@ -155,4 +142,21 @@ func createErrorRedirectURL(err string, desc string) string {
 	params.Add("error", err)
 	params.Add("error_description", desc)
 	return os.Getenv("LOGIN_URL") + "?" + params.Encode()
+}
+
+func generateJWT(user *model.User) (token string, err error) {
+	claims := &JWTClaims{
+		user.Username,
+		user.Locale,
+		user.Avatar,
+		user.Discriminator,
+		user.ID,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+		},
+	}
+
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	return t.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }

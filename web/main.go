@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 
@@ -25,6 +27,14 @@ func main() {
 
 	e.GET("/auth/login", h.Auth)
 	e.GET("/auth/callback", h.Callback)
+
+	u := e.Group("/user")
+	config := middleware.JWTConfig{
+		Claims: &handler.JWTClaims{},
+		SigningKey: []byte(os.Getenv("JWT_SECRET")),
+	}
+	u.Use(middleware.JWTWithConfig(config))
+	u.GET("guilds", h.GetGuilds)
 
 	e.Logger.Fatal(e.Start(":8082"))
 }

@@ -6,8 +6,8 @@ type User struct {
 		Discriminator string `json:"discriminator" db:"discriminator"`
 		Avatar        string `json:"avatar" db:"avatar"`
 		Locale        string `json:"locale" db:"locale"`
-		CreatedAt     string `db:"created_at"`
-		LastLogin     string `db:"last_login"`
+		CreatedAt     string `json:",omitempty" db:"created_at"`
+		LastLogin     string `json:",omitempty" db:"last_login"`
 }
 
 func (m *model) LoginUser(user *User, token *Token) (err error) {
