@@ -92,14 +92,7 @@ func (h *handler) Callback(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
 
-	client := config.Client(context.Background(), token)
-	res, err := client.Get("https://discordapp.com/api/v6/users/@me")
-	if err != nil {
-		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
+	user, err := getUserFromDiscord(config, token)
 	if err != nil {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
@@ -110,18 +103,13 @@ func (h *handler) Callback(c echo.Context) error {
 	// }
 	// return c.JSON(http.StatusOK, guilds)
 	
-	var user model.User
-	if err := json.Unmarshal(body, &user); err != nil {
-		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
-	}
-
 	mt := model.ToModelToken(user.ID, token)
 
-	if err := h.Model.LoginUser(&user, mt); err != nil {
+	if err := h.Model.LoginUser(user, mt); err != nil {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
 
-	t, err := generateJWT(&user)
+	t, err := generateJWT(user)
 	if err != nil {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
@@ -159,4 +147,25 @@ func generateJWT(user *model.User) (token string, err error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return t.SignedString([]byte(os.Getenv("JWT_SECRET")))
+}
+
+func getUserFromDiscord(config *oauth2.Config, token *oauth2.Token) (user *model.User, err error) {
+	client := config.Client(context.Background(), token)
+	
+	res, err := client.Get("https://discordapp.com/api/v6/users/@me")
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(body, &user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

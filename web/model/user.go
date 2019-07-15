@@ -1,6 +1,7 @@
 package model
 
-type User struct {
+type (
+	User struct {
 		ID            string `json:"id" db:"id"`
 		Username      string `json:"username" db:"username"`
 		Discriminator string `json:"discriminator" db:"discriminator"`
@@ -8,21 +9,30 @@ type User struct {
 		Locale        string `json:"locale" db:"locale"`
 		CreatedAt     string `json:",omitempty" db:"created_at"`
 		LastLogin     string `json:",omitempty" db:"last_login"`
-}
+	}
+
+	UserGuild struct {
+		UserID      string `db:"user_id"`
+		GuildID     string `json:"id" db:"guild_id"`
+		IsOwner     bool   `json:"owner" db:"is_owner"`
+		Permissions uint   `json:"permissions" db:"permissions"`
+		CanInvite   bool   `db:"can_invite"`
+	}
+)
 
 func (m *model) LoginUser(user *User, token *Token) (err error) {
 	tx, err := m.db.Begin()
-    if err != nil {
-        return
-    }
-    defer func() {
-        if err != nil {
-            tx.Rollback()
-            return
-        }
-        err = tx.Commit()
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
 	}()
-	
+
 	_, err = tx.Exec(`INSERT INTO users
 					(id, username, discriminator, avatar, locale)
 					VALUES (?, ?, ?, ?, ?)
@@ -32,11 +42,11 @@ func (m *model) LoginUser(user *User, token *Token) (err error) {
 					avatar = VALUES(avatar),
 					locale = VALUES(locale),
 					last_login = NOW()`,
-					user.ID,
-					user.Username,
-					user.Discriminator,
-					user.Avatar,
-					user.Locale)
+		user.ID,
+		user.Username,
+		user.Discriminator,
+		user.Avatar,
+		user.Locale)
 	if err != nil {
 		return
 	}
@@ -49,11 +59,11 @@ func (m *model) LoginUser(user *User, token *Token) (err error) {
 					token_type = VALUES(token_type),
 					refresh_token = VALUES(refresh_token),
 					expiry = VALUES(expiry)`,
-					token.UserID,
-					token.AccessToken,
-					token.TokenType,
-					token.RefreshToken,
-					token.Expiry)
+		token.UserID,
+		token.AccessToken,
+		token.TokenType,
+		token.RefreshToken,
+		token.Expiry)
 	if err != nil {
 		return
 	}

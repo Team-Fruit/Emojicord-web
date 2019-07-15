@@ -11,6 +11,7 @@ import (
 
 	"github.com/Team-Fruit/Emojicord-web/web/handler"
 	"github.com/Team-Fruit/Emojicord-web/web/model"
+	"github.com/Team-Fruit/Emojicord-web/web/discord"
 )
 
 func main() {
@@ -23,7 +24,9 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	h := handler.NewHandler(model.NewModel(db))
+	m := model.NewModel(db)
+	d := discord.NewClient(os.Getenv("BOT_TOKEN"))
+	h := handler.NewHandler(m, d)
 
 	e.GET("/auth/login", h.Auth)
 	e.GET("/auth/callback", h.Callback)
