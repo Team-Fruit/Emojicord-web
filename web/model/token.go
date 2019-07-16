@@ -31,3 +31,8 @@ func ToModelToken(id string, t *oauth2.Token) *Token {
 		Expiry: t.Expiry,
 	}
 }
+
+func (m *model) GetToken(id string) (token *Token, err error) {
+	err = m.db.Get(token, "SELECT * FROM users__discord_tokens WHERE user_id = ?", id)
+	return
+}

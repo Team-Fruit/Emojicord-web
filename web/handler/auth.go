@@ -20,14 +20,6 @@ import (
 
 const cookieName = "discordOAuth2State"
 
-// type Guild struct {
-// 	Owner       bool   `json:"owner"`
-// 	Permissions int    `json:"permissions"`
-// 	Icon        string `json:"icon"`
-// 	ID          string `json:"id"`
-// 	Name        string `json:"name"`
-// }
-
 type JWTClaims struct {
 	Username      string `json:"username"`
 	Locale        string `json:"locale"`
@@ -96,12 +88,6 @@ func (h *handler) Callback(c echo.Context) error {
 	if err != nil {
 		return c.Redirect(http.StatusSeeOther, createErrorRedirectURL("internal_server_error", "Internal Server Error"))
 	}
-	
-	// var guilds []Guild
-	// if err := json.Unmarshal(body, &guilds); err != nil {
-	// 	return err;
-	// }
-	// return c.JSON(http.StatusOK, guilds)
 	
 	mt := model.ToModelToken(user.ID, token)
 

@@ -12,6 +12,7 @@ type (
 
 	Database interface {
 		LoginUser(user *User, token *Token) (err error)
+		GetToken(id string) (token *Token, err error)
 	}
 )
 

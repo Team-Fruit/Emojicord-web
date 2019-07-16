@@ -25,19 +25,20 @@ func main() {
 	e.Use(middleware.CORS())
 
 	m := model.NewModel(db)
-	d := discord.NewClient(os.Getenv("BOT_TOKEN"))
-	h := handler.NewHandler(m, d)
+	b := discord.NewBotClient(os.Getenv("BOT_TOKEN"))
+	u := discord.NewUserClient(handler.GetConfig())
+	h := handler.NewHandler(m, b, u)
 
 	e.GET("/auth/login", h.Auth)
 	e.GET("/auth/callback", h.Callback)
 
-	u := e.Group("/user")
+	g := e.Group("/user")
 	config := middleware.JWTConfig{
 		Claims: &handler.JWTClaims{},
 		SigningKey: []byte(os.Getenv("JWT_SECRET")),
 	}
-	u.Use(middleware.JWTWithConfig(config))
-	u.GET("guilds", h.GetGuilds)
+	g.Use(middleware.JWTWithConfig(config))
+	g.GET("/guilds", h.GetGuilds)
 
 	e.Logger.Fatal(e.Start(":8082"))
 }
