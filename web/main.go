@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	db := sqlx.MustConnect("mysql", "emojicord:@tcp(db:3306)/emojicord_db?parseTime=true")
+	db := sqlx.MustConnect("mysql", "emojicord:password@tcp(db:3306)/emojicord_db?parseTime=true")
 	defer db.Close()
 
 	e := echo.New()
