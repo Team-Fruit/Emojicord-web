@@ -13,6 +13,8 @@ type (
 	Database interface {
 		LoginUser(user *User, token *Token) (err error)
 		GetToken(id string) (token *Token, err error)
+		AddGuilds(guilds *[]Guild) (err error)
+		AddUserGuild(userGuilds *[]UserGuild) (err error)
 	}
 )
 

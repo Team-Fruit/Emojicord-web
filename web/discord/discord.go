@@ -63,7 +63,7 @@ func (b *bot) get(endpoint string) ([]byte, error) {
 func (u *user) get(endpoint string, token *oauth2.Token) ([]byte, error) {
 	client := u.Config.Client(context.Background(), token)
 
-	res, err := client.Get("https://discordapp.com/api/v6/users/@me")
+	res, err := client.Get(u.URL + endpoint)
 	if err != nil {
 		return nil, err
 	}

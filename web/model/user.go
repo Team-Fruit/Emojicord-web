@@ -10,14 +10,6 @@ type (
 		CreatedAt     string `json:",omitempty" db:"created_at"`
 		LastLogin     string `json:",omitempty" db:"last_login"`
 	}
-
-	UserGuild struct {
-		UserID      string `db:"user_id"`
-		GuildID     string `json:"id" db:"guild_id"`
-		IsOwner     bool   `json:"owner" db:"is_owner"`
-		Permissions uint   `json:"permissions" db:"permissions"`
-		CanInvite   bool   `db:"can_invite"`
-	}
 )
 
 func (m *model) LoginUser(user *User, token *Token) (err error) {

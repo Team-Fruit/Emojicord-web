@@ -32,7 +32,10 @@ func ToModelToken(id string, t *oauth2.Token) *Token {
 	}
 }
 
-func (m *model) GetToken(id string) (token *Token, err error) {
-	err = m.db.Get(token, "SELECT * FROM users__discord_tokens WHERE user_id = ?", id)
-	return
+func (m *model) GetToken(id string) (*Token, error) {
+	var token Token
+	if err := m.db.Get(&token, "SELECT * FROM users__discord_tokens WHERE user_id = ?", id); err != nil {
+		return nil, err
+	}
+	return &token, nil
 }

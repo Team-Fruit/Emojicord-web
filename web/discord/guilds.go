@@ -24,7 +24,7 @@ func (u *user) GetGuilds(token *oauth2.Token) (*[]Guild, error) {
 	if err = json.Unmarshal(body, &guilds); err != nil {
 		return nil, err
 	}
-
+	
 	return &guilds, err
 }
 
