@@ -29,6 +29,8 @@ func main() {
 	u := discord.NewUserClient(handler.GetConfig())
 	h := handler.NewHandler(m, b, u)
 
+	discord.LoginBotUser(os.Getenv("BOT_TOKEN"))
+
 	e.GET("/auth/login", h.Auth)
 	e.GET("/auth/callback", h.Callback)
 
