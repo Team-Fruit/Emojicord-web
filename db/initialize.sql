@@ -31,10 +31,11 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_tokens` (
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_guilds` (
-    `id`               VARCHAR(64)     NOT NULL,
-    `name`             VARCHAR(100)    NOT NULL,
-    `icon`             VARCHAR(255)    NOT NULL,
-    `is_bot_exists`    BOOLEAN         NOT NULL,
+    `id`                  VARCHAR(64)     NOT NULL,
+    `name`                VARCHAR(100)    NOT NULL,
+    `icon`                VARCHAR(255)    NOT NULL,
+    `is_bot_exists`       BOOLEAN         NOT NULL,
+    `emoji_updated_at`    TIMESTAMP,
 
     PRIMARY KEY ( `id` )
 );
