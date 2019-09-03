@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_guilds` (
     `name`                VARCHAR(100)    NOT NULL,
     `icon`                VARCHAR(255)    NOT NULL,
     `is_bot_exists`       BOOLEAN         NOT NULL,
-    `emoji_updated_at`    TIMESTAMP,
+    `emoji_updated_at`    TIMESTAMP       NULL DEFAULT NULL,
 
     PRIMARY KEY ( `id` )
 );
