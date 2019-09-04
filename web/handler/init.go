@@ -1,5 +1,7 @@
 package handler
 
+import "fmt"
+
 func (h *handler) Init() error {
 	remoteGuilds, err := h.Bot.GetGuilds()
 	if err != nil {
@@ -8,6 +10,7 @@ func (h *handler) Init() error {
 
 	localGuilds, err := h.Model.GetBotExistsGuilds()
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 

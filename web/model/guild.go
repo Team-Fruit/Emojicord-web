@@ -88,16 +88,19 @@ func (m *model) AddUserGuild(userGuilds *[]UserGuild) (err error) {
 	return
 }
 
-func (m *model) GetBotExistsGuilds() (guilds *[]Guild, err error) {
-	err = m.db.Select(&guilds, `SELECT * FROM discord_guilds WHERE is_bot_exists = true`)
-	return
+func (m *model) GetBotExistsGuilds() (*[]Guild, error) {
+	guilds := &[]Guild{}
+	if err := m.db.Select(guilds, `SELECT * FROM discord_guilds WHERE is_bot_exists = true`); err != nil {
+		return nil, err
+	}
+	return guilds, nil
 }
 
 func (m *model) UpdateGuild(guild *Guild) (err error) {
 	_, err = m.db.NamedQuery(`UPDATE discord_guilds SET 
 							name=:name, 
 							icon=:icon, 
-							is_bot_exists=:botexists
-							WHERE id=:id`, guild)
+							is_bot_exists=:is_bot_exists
+							WHERE id=:id`, &guild)
 	return err
 }
