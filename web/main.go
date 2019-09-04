@@ -19,21 +19,21 @@ func main() {
 	db := sqlx.MustConnect("mysql", "emojicord:password@tcp(db:3306)/emojicord_db?parseTime=true")
 	defer db.Close()
 
-	e := echo.New()
-
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
-
 	m := model.NewModel(db)
 	b := discord.NewBotClient(os.Getenv("BOT_TOKEN"))
 	u := discord.NewUserClient(handler.GetConfig())
 	h := handler.NewHandler(m, b, u)
 
+	discord.InitBotUser(os.Getenv("BOT_TOKEN"))
 	if err := h.Init(); err != nil {
 		fmt.Println("Failed to guild update initialization", err)
 	}
-	discord.InitBotUser(os.Getenv("BOT_TOKEN"))
+
+	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	e.GET("/auth/login", h.Auth)
 	e.GET("/auth/callback", h.Callback)
