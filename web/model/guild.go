@@ -1,12 +1,16 @@
 package model
 
+import (
+	"database/sql"
+)
+
 type (
 	Guild struct {
-		ID             string `json:"id" db:"id"`
-		Name           string `json:"name" db:"name"`
-		Icon           string `json:"icon" db:"icon"`
-		BotExists      bool   `db:"is_bot_exists"`
-		EmojiUpdatedAt string `json:"updatedat" db:"emoji_updated_at"`
+		ID             string         `json:"id" db:"id"`
+		Name           string         `json:"name" db:"name"`
+		Icon           string         `json:"icon" db:"icon"`
+		BotExists      bool           `db:"is_bot_exists"`
+		EmojiUpdatedAt sql.NullString `json:"updatedat" db:"emoji_updated_at"`
 	}
 
 	UserGuild struct {
@@ -82,4 +86,18 @@ func (m *model) AddUserGuild(userGuilds *[]UserGuild) (err error) {
 	}
 
 	return
+}
+
+func (m *model) GetBotExistsGuilds() (guilds []Guild, err error) {
+	err = m.db.Select(&guilds, `SELECT * FROM discord_guilds WHERE is_bot_exists = true`)
+	return
+}
+
+func (m *model) UpdateGuild(guild *Guild) (err error) {
+	_, err = m.db.NamedQuery(`UPDATE discord_guilds SET 
+							name=:name, 
+							icon=:icon, 
+							is_bot_exists=:botexists
+							WHERE id=:id`, guild)
+	return err
 }

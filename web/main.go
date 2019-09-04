@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -29,7 +30,10 @@ func main() {
 	u := discord.NewUserClient(handler.GetConfig())
 	h := handler.NewHandler(m, b, u)
 
-	discord.LoginBotUser(os.Getenv("BOT_TOKEN"))
+	if err := h.Init(); err != nil {
+		fmt.Println("Failed to guild update initialization", err)
+	}
+	discord.InitBotUser(os.Getenv("BOT_TOKEN"))
 
 	e.GET("/auth/login", h.Auth)
 	e.GET("/auth/callback", h.Callback)
