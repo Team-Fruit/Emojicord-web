@@ -31,6 +31,7 @@ func main() {
 	}
 
 	dc.AddHandler(h.GuildCreate)
+	dc.AddHandler(h.GuildDelete)
 	dc.AddHandler(h.EmojisUpdate)
 
 	err = dc.Open()

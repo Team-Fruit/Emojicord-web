@@ -104,3 +104,10 @@ func (m *model) UpdateGuild(guild *Guild) (err error) {
 							WHERE id=:id`, &guild)
 	return err
 }
+
+func (m *model) UpdateGuildBotExists(id string, exists bool) (err error) {
+	_, err = m.db.Exec(`UPDATE discord_guilds SET 
+						is_bot_exists=? 
+						WHERE id=?`, exists, id)
+	return err
+}

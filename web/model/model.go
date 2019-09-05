@@ -17,6 +17,7 @@ type (
 		AddUserGuild(userGuilds *[]UserGuild) (err error)
 		GetBotExistsGuilds() (guilds *[]Guild, err error)
 		UpdateGuild(guild *Guild) (err error)
+		UpdateGuildBotExists(id string, exists bool) (err error)
 	}
 )
 
