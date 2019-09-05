@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/bwmarrin/discordgo"
 
 	"github.com/Team-Fruit/Emojicord-web/web/handler"
 	"github.com/Team-Fruit/Emojicord-web/web/model"
@@ -24,7 +25,21 @@ func main() {
 	u := discord.NewUserClient(handler.GetConfig())
 	h := handler.NewHandler(m, b, u)
 
-	discord.InitBotUser(os.Getenv("BOT_TOKEN"))
+	dc, err := discordgo.New("Bot " + os.Getenv("BOT_TOKEN"))
+	if err != nil {
+		fmt.Println("Failed to creating Discord session,", err)
+	}
+
+	dc.AddHandler(h.GuildCreate)
+	dc.AddHandler(h.EmojisUpdate)
+
+	err = dc.Open()
+	if err != nil {
+		fmt.Println("Failed to opening discord bot connection,", err)
+		return
+	}
+
+
 	if err := h.Init(); err != nil {
 		fmt.Println("Failed to guild update initialization", err)
 	}
