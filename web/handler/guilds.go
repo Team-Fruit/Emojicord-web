@@ -33,24 +33,37 @@ func (h *handler) GetGuilds(c echo.Context) error {
 		return err
 	}
 
-	botGuilds, err := h.Bot.GetGuilds()
+	botGuilds, err := h.Model.GetBotExistsGuilds()
 	if err != nil {
 		return err
 	}
 
+	// discord_guilds
 	nug := make([]model.Guild, 0, len(*userGuilds))
+	// users__discord_guilds
 	ug := make([]model.UserGuild, 0, len(*userGuilds))
+	// Response
 	rg := make([]Guild, 0, len(*userGuilds))
 	for _, g := range *userGuilds {
 		permissions := uint(g.Permissions)
 		canInvite := (permissions & 0x20) == 0x20
 
-		nug = append(nug, model.Guild{
-			ID:        g.ID,
-			Name:      g.Name,
-			Icon:      g.Icon,
-			BotExists: false,
-		})
+		botExists := false
+		for _, b := range *botGuilds {
+			if g.ID == b.ID {
+				botExists = true
+				break
+			}
+		}
+
+		if !botExists {
+			nug = append(nug, model.Guild{
+				ID:        g.ID,
+				Name:      g.Name,
+				Icon:      g.Icon,
+				BotExists: false,
+			})
+		}
 
 		ug = append(ug, model.UserGuild{
 			UserID:      id,
@@ -65,6 +78,7 @@ func (h *handler) GetGuilds(c echo.Context) error {
 			Name:      g.Name,
 			Icon:      g.Icon,
 			Owner:     g.Owner,
+			BotExists: botExists,
 			CanInvite: canInvite,
 		})
 	}
@@ -75,29 +89,6 @@ func (h *handler) GetGuilds(c echo.Context) error {
 	}
 
 	err = h.Model.AddUserGuild(&ug)
-	if err != nil {
-		return err
-	}
-
-	//Update Bot Guilds
-	nbg := make([]model.Guild, 0, len(*botGuilds))
-	for _, g := range *botGuilds {
-		nbg = append(nbg, model.Guild{
-			ID:        g.ID,
-			Name:      g.Name,
-			Icon:      g.Icon,
-			BotExists: true,
-		})
-
-		for i := range rg {
-			if rg[i].ID == g.ID {
-				rg[i].BotExists = true
-				break
-			}
-		}
-	}
-
-	err = h.Model.AddGuilds(&nbg)
 	if err != nil {
 		return err
 	}
