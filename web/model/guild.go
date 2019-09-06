@@ -1,16 +1,11 @@
 package model
 
-import (
-	"database/sql"
-)
-
 type (
 	Guild struct {
 		ID             string         `json:"id" db:"id"`
 		Name           string         `json:"name" db:"name"`
 		Icon           string         `json:"icon" db:"icon"`
 		BotExists      bool           `db:"is_bot_exists"`
-		EmojiUpdatedAt sql.NullString `json:"updatedat" db:"emoji_updated_at"`
 	}
 
 	UserGuild struct {

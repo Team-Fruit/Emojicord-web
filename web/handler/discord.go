@@ -11,7 +11,14 @@ import (
 func (h *handler) GuildCreate(s *discordgo.Session, e *discordgo.GuildCreate) {
 	fmt.Println("GuildCreate:", e.Guild.Name)
 
-	if err := h.Model.UpdateGuildBotExists(e.Guild.ID, true); err != nil {
+	guild := &model.Guild{
+		ID: e.Guild.ID,
+		Name: e.Guild.Name,
+		Icon: e.Guild.Icon,
+		BotExists: true,
+	}
+	
+	if err := h.Model.UpdateGuild(guild); err != nil {
 		fmt.Println("Failed to update guild", err)
 	}
 }
@@ -21,7 +28,7 @@ func (h *handler) GuildUpdate(s *discordgo.Session, e *discordgo.GuildUpdate) {
 
 	guild := &model.Guild{
 		ID: e.Guild.ID,
-		Name: e.Guild.Name,
+		Name: e.Guild.Name,	
 		Icon: e.Guild.Icon,
 		BotExists: true,
 	}
