@@ -18,8 +18,8 @@ func (h *handler) GuildCreate(s *discordgo.Session, e *discordgo.GuildCreate) {
 		BotExists: true,
 	}
 	
-	if err := h.Model.UpdateGuild(guild); err != nil {
-		fmt.Println("Failed to update guild", err)
+	if err := h.Model.AddGuild(guild); err != nil {
+		fmt.Println("Failed to add guild", err)
 	}
 }
 

@@ -2,10 +2,10 @@ package model
 
 type (
 	Guild struct {
-		ID             string         `json:"id" db:"id"`
-		Name           string         `json:"name" db:"name"`
-		Icon           string         `json:"icon" db:"icon"`
-		BotExists      bool           `db:"is_bot_exists"`
+		ID        string `json:"id" db:"id"`
+		Name      string `json:"name" db:"name"`
+		Icon      string `json:"icon" db:"icon"`
+		BotExists bool   `db:"is_bot_exists"`
 	}
 
 	UserGuild struct {
@@ -47,6 +47,21 @@ func (m *model) AddGuilds(guilds *[]Guild) (err error) {
 		}
 	}
 
+	return
+}
+
+func (m *model) AddGuild(guild *Guild) (err error) {
+	_, err = m.db.Exec(`INSERT INTO 
+						discord_guilds (id, name, icon, is_bot_exists) 
+						VALUES (?, ?, ?, ?)
+						ON DUPLICATE KEY UPDATE
+						name = VALUES(name),
+						icon = VALUES(icon),
+						is_bot_exists = VALUES(is_bot_exists)`,
+		guild.ID,
+		guild.Name,
+		guild.Icon,
+		guild.BotExists)
 	return
 }
 
