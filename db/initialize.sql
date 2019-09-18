@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis` (
     PRIMARY KEY ( `id` ),
 
     CONSTRAINT `fk__discord_guilds__discord_emojis`
-        FOREIGN KEY ( `id` )
+        FOREIGN KEY ( `guild_id` )
         REFERENCES `emojicord_db`.`discord_guilds` ( `id` )
         ON DELETE CASCADE
 );
