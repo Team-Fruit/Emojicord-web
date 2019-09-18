@@ -88,7 +88,7 @@ func (h *handler) GetGuilds(c echo.Context) error {
 		return err
 	}
 
-	err = h.Model.AddUserGuild(&ug)
+	err = h.Model.AddUserGuilds(&ug)
 	if err != nil {
 		return err
 	}

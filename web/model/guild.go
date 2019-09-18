@@ -65,7 +65,7 @@ func (m *model) AddGuild(guild *Guild) (err error) {
 	return
 }
 
-func (m *model) AddUserGuild(userGuilds *[]UserGuild) (err error) {
+func (m *model) AddUserGuilds(userGuilds *[]UserGuild) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {
 		return

@@ -15,7 +15,7 @@ type (
 		GetToken(id string) (token *Token, err error)
 		AddGuilds(guilds *[]Guild) (err error)
 		AddGuild(guild *Guild) (err error)
-		AddUserGuild(userGuilds *[]UserGuild) (err error)
+		AddUserGuilds(userGuilds *[]UserGuild) (err error)
 		GetBotExistsGuilds() (guilds *[]Guild, err error)
 		UpdateGuild(guild *Guild) (err error)
 		UpdateGuildBotExists(id string, exists bool) (err error)
