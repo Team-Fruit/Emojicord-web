@@ -1,5 +1,9 @@
 package model
 
+import (
+	"github.com/Team-Fruit/Emojicord-web/web/discord"
+)
+
 type (
 	Emoji struct {
 		ID       string `db:"id"`
@@ -16,7 +20,7 @@ type (
 	}
 )
 
-func (m *model) AddEmojis(emojis *[]Emoji) (err error) {
+func (m *model) AddEmojisFromModel(emojis *[]Emoji) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {
 		return
@@ -37,6 +41,37 @@ func (m *model) AddEmojis(emojis *[]Emoji) (err error) {
 			emoji.ID,
 			emoji.GuildID,
 			emoji.UserID,
+			emoji.Name,
+			emoji.Animated)
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (m *model) AddEmojisFromDiscord(emojis *[]discord.Emoji) (err error) {
+	tx, err := m.db.Begin()
+	if err != nil {
+		return
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+	}()
+
+	for _, emoji := range *emojis {
+		_, err = tx.Exec(`INSERT INTO discord_emojis
+						VALUES (?, ?, ?, ?, ?)
+						ON DUPLICATE KEY UPDATE
+						name = VALUES(name)`,
+			emoji.ID,
+			emoji.GuildID,
+			emoji.User.ID,
 			emoji.Name,
 			emoji.Animated)
 		if err != nil {

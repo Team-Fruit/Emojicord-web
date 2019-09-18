@@ -9,6 +9,7 @@ type Emoji struct {
 	Name     string    `json:"name"`
 	User     EmojiUser `json:"user"`
 	Animated bool      `json:"animated"`
+	GuildID  string
 }
 
 type EmojiUser struct {
@@ -27,6 +28,10 @@ func (b *bot) GetEmojis(guildid string) (*[]Emoji, error) {
 	var emojis []Emoji
 	if err = json.Unmarshal(body, &emojis); err != nil {
 		return nil, err
+	}
+
+	for _, e := range emojis {
+		e.GuildID = guildid
 	}
 
 	return &emojis, nil
