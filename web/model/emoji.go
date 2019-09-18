@@ -38,7 +38,7 @@ func (m *model) AddEmojisFromModel(emojis *[]Emoji) (err error) {
 						VALUES (?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
 						user_id = VALUES(user_id),
-						name = VALUES(name),`,
+						name = VALUES(name)`,
 			emoji.ID,
 			emoji.GuildID,
 			emoji.UserID,
