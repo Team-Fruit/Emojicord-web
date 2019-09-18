@@ -37,7 +37,8 @@ func (m *model) AddEmojisFromModel(emojis *[]Emoji) (err error) {
 		_, err = tx.Exec(`INSERT INTO discord_emojis
 						VALUES (?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
-						name = VALUES(name)`,
+						user_id = VALUES(user_id),
+						name = VALUES(name),`,
 			emoji.ID,
 			emoji.GuildID,
 			emoji.UserID,
@@ -68,6 +69,7 @@ func (m *model) AddEmojisFromDiscord(emojis *[]discord.Emoji) (err error) {
 		_, err = tx.Exec(`INSERT INTO discord_emojis
 						VALUES (?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
+						user_id = VALUES(user_id),
 						name = VALUES(name)`,
 			emoji.ID,
 			emoji.GuildID,

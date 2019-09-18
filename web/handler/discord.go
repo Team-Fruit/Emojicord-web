@@ -21,6 +21,15 @@ func (h *handler) GuildCreate(s *discordgo.Session, e *discordgo.GuildCreate) {
 	if err := h.Model.AddGuild(guild); err != nil {
 		fmt.Println("Failed to add guild", err)
 	}
+
+	emojis, err := h.Bot.GetEmojis(e.Guild.ID)
+	if err != nil {
+		fmt.Println("Failed to add get emoji", err)
+	}
+
+	if err := h.Model.AddEmojisFromDiscord(emojis); err != nil {
+		fmt.Println("Failed to add emoji", err)
+	}
 }
 
 func (h *handler) GuildUpdate(s *discordgo.Session, e *discordgo.GuildUpdate) {

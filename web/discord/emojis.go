@@ -4,20 +4,22 @@ import (
 	"encoding/json"
 )
 
-type Emoji struct {
-	ID       string    `json:"id"`
-	Name     string    `json:"name"`
-	User     EmojiUser `json:"user"`
-	Animated bool      `json:"animated"`
-	GuildID  string
-}
+type (
+	EmojiUser struct {
+		UserName      string `json:"username"`
+		Discriminator string `json:"discriminator"`
+		ID            string `json:"id"`
+		avatar        string `json:"avatar"`
+	}
 
-type EmojiUser struct {
-	UserName      string `json:"username"`
-	Discriminator string `json:"discriminator"`
-	ID            string `json:"id"`
-	avatar        string `json:"avatar"`
-}
+	Emoji struct {
+		ID       string    `json:"id"`
+		Name     string    `json:"name"`
+		User     EmojiUser `json:"user"`
+		Animated bool      `json:"animated"`
+		GuildID  string
+	}
+)
 
 func (b *bot) GetEmojis(guildid string) (*[]Emoji, error) {
 	body, err := b.get("/guilds/" + guildid + "/emojis")
@@ -30,8 +32,8 @@ func (b *bot) GetEmojis(guildid string) (*[]Emoji, error) {
 		return nil, err
 	}
 
-	for _, e := range emojis {
-		e.GuildID = guildid
+	for i := range emojis {
+		emojis[i].GuildID = guildid
 	}
 
 	return &emojis, nil
