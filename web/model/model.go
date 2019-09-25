@@ -21,8 +21,7 @@ type (
 		GetBotExistsGuilds() (guilds *[]Guild, err error)
 		UpdateGuild(guild *Guild) (err error)
 		UpdateGuildBotExists(id string, exists bool) (err error)
-		AddEmojisFromModel(emojis *[]Emoji) (err error)
-		AddEmojisFromDiscord(emojis *[]discord.Emoji) (err error)
+		AddEmojis(emojis *[]discord.Emoji) (err error)
 		AddUserEmojis(userEmojis *[]UserEmoji) (err error)
 	}
 )

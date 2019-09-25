@@ -20,39 +20,7 @@ type (
 	}
 )
 
-func (m *model) AddEmojisFromModel(emojis *[]Emoji) (err error) {
-	tx, err := m.db.Begin()
-	if err != nil {
-		return
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
-	for _, emoji := range *emojis {
-		_, err = tx.Exec(`INSERT INTO discord_emojis
-						VALUES (?, ?, ?, ?, ?)
-						ON DUPLICATE KEY UPDATE
-						user_id = VALUES(user_id),
-						name = VALUES(name)`,
-			emoji.ID,
-			emoji.GuildID,
-			emoji.UserID,
-			emoji.Name,
-			emoji.Animated)
-		if err != nil {
-			return
-		}
-	}
-
-	return
-}
-
-func (m *model) AddEmojisFromDiscord(emojis *[]discord.Emoji) (err error) {
+func (m *model) AddEmojis(emojis *[]discord.Emoji) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {
 		return
