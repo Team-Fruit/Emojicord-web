@@ -52,6 +52,20 @@ func (m *model) AddEmojis(emojis *[]discord.Emoji) (err error) {
 	return
 }
 
+func (m *model) AddEmoji(emoji *discord.Emoji) (err error) {
+	_, err = m.db.Exec(`INSERT INTO discord_emojis
+						VALUES (?, ?, ?, ?, ?)
+						ON DUPLICATE KEY UPDATE
+						user_id = VALUES(user_id),
+						name = VALUES(name)`,
+		emoji.ID,
+		emoji.GuildID,
+		emoji.User.ID,
+		emoji.Name,
+		emoji.Animated)
+	return
+}
+
 func (m *model) AddUserEmojis(userEmojis *[]UserEmoji) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {

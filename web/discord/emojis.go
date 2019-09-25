@@ -38,3 +38,19 @@ func (b *bot) GetEmojis(guildid string) (*[]Emoji, error) {
 
 	return &emojis, nil
 }
+
+func (b *bot) GetEmoji(guildid string, emojiid string) (*Emoji, error) {
+	body, err := b.get("/guilds/"+guildid+"/emojis/"+emojiid)
+	if err != nil {
+		return nil, err
+	}
+
+	var emoji Emoji
+	if err = json.Unmarshal(body, &emoji); err != nil {
+		return nil, err
+	}
+
+	emoji.GuildID = guildid
+
+	return &emoji, nil
+}

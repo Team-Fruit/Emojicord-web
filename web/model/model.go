@@ -22,6 +22,7 @@ type (
 		UpdateGuild(guild *Guild) (err error)
 		UpdateGuildBotExists(id string, exists bool) (err error)
 		AddEmojis(emojis *[]discord.Emoji) (err error)
+		AddEmoji(emoji *discord.Emoji) (err error)
 		AddUserEmojis(userEmojis *[]UserEmoji) (err error)
 	}
 )

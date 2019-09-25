@@ -73,4 +73,25 @@ func (h *handler) GuildDelete(s *discordgo.Session, e *discordgo.GuildDelete) {
 
 func (h *handler) EmojisUpdate(s *discordgo.Session, e *discordgo.GuildEmojisUpdate) {
 	fmt.Println("EmojisUpdate:", e.GuildID)
+	
+	if len(e.Emojis) > 1 {
+		emojis, err := h.Bot.GetEmojis(e.GuildID)
+		if err != nil {
+			fmt.Println("Failed to add get emoji", err)
+		}
+	
+		if err := h.Model.AddEmojis(emojis); err != nil {
+			fmt.Println("Failed to add emoji", err)
+		}	
+	} else {
+		emoji, err := h.Bot.GetEmoji(e.GuildID, e.Emojis[0].ID)
+		if err != nil {
+			fmt.Println("Failed to add get emoji", err)
+		}
+	
+		if err := h.Model.AddEmoji(emoji); err != nil {
+			fmt.Println("Failed to add emoji", err)
+		}
+	
+	}
 }
