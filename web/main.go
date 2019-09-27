@@ -63,6 +63,7 @@ func main() {
 	}
 	g.Use(middleware.JWTWithConfig(config))
 	g.GET("/guilds", h.GetGuilds)
+	g.GET("/emojis", h.GetEmojis)
 
 	e.Logger.Fatal(e.Start(":8082"))
 }
