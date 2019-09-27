@@ -16,8 +16,8 @@ type (
 	}
 
 	BotClient interface {
-		GetGuilds() (guild *[]Guild, err error)
-		GetEmojis(guildid string) (*[]Emoji, error)
+		GetGuilds() (guild []*Guild, err error)
+		GetEmojis(guildid string) ([]*Emoji, error)
 		GetEmoji(guildid string, emojiid string) (*Emoji, error)
 	}
 
@@ -27,7 +27,7 @@ type (
 	}
 
 	UserClient interface {
-		GetGuilds(token *oauth2.Token) (guild *[]Guild, err error)
+		GetGuilds(token *oauth2.Token) (guild []*Guild, err error)
 	}
 )
 

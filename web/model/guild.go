@@ -17,7 +17,7 @@ type (
 	}
 )
 
-func (m *model) AddGuilds(guilds *[]Guild) (err error) {
+func (m *model) AddGuilds(guilds []*Guild) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {
 		return
@@ -30,7 +30,7 @@ func (m *model) AddGuilds(guilds *[]Guild) (err error) {
 		err = tx.Commit()
 	}()
 
-	for _, guild := range *guilds {
+	for i := range guilds {
 		_, err = tx.Exec(`INSERT INTO 
 						discord_guilds (id, name, icon, is_bot_exists) 
 						VALUES (?, ?, ?, ?)
@@ -38,10 +38,10 @@ func (m *model) AddGuilds(guilds *[]Guild) (err error) {
 						name = VALUES(name),
 						icon = VALUES(icon),
 						is_bot_exists = VALUES(is_bot_exists)`,
-			guild.ID,
-			guild.Name,
-			guild.Icon,
-			guild.BotExists)
+			guilds[i].ID,
+			guilds[i].Name,
+			guilds[i].Icon,
+			guilds[i].BotExists)
 		if err != nil {
 			return
 		}
@@ -65,7 +65,7 @@ func (m *model) AddGuild(guild *Guild) (err error) {
 	return
 }
 
-func (m *model) AddUserGuilds(userGuilds *[]UserGuild) (err error) {
+func (m *model) AddUserGuilds(userGuilds []*UserGuild) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {
 		return
@@ -78,18 +78,18 @@ func (m *model) AddUserGuilds(userGuilds *[]UserGuild) (err error) {
 		err = tx.Commit()
 	}()
 
-	for _, ug := range *userGuilds {
+	for i := range userGuilds {
 		_, err = tx.Exec(`INSERT INTO users__discord_guilds
 						VALUES (?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
 						is_owner = VALUES(is_owner),
 						permissions = VALUES(permissions),
 						can_invite = VALUES(can_invite)`,
-			ug.UserID,
-			ug.GuildID,
-			ug.IsOwner,
-			ug.Permissions,
-			ug.CanInvite)
+			userGuilds[i].UserID,
+			userGuilds[i].GuildID,
+			userGuilds[i].IsOwner,
+			userGuilds[i].Permissions,
+			userGuilds[i].CanInvite)
 		if err != nil {
 			return
 		}
@@ -98,9 +98,9 @@ func (m *model) AddUserGuilds(userGuilds *[]UserGuild) (err error) {
 	return
 }
 
-func (m *model) GetBotExistsGuilds() (*[]Guild, error) {
-	guilds := &[]Guild{}
-	if err := m.db.Select(guilds, `SELECT * FROM discord_guilds WHERE is_bot_exists = true`); err != nil {
+func (m *model) GetBotExistsGuilds() ([]*Guild, error) {
+	guilds := []*Guild{}
+	if err := m.db.Select(&guilds, `SELECT * FROM discord_guilds WHERE is_bot_exists = true`); err != nil {
 		return nil, err
 	}
 	return guilds, nil

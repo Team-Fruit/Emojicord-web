@@ -21,13 +21,13 @@ type (
 	}
 )
 
-func (b *bot) GetEmojis(guildid string) (*[]Emoji, error) {
+func (b *bot) GetEmojis(guildid string) ([]*Emoji, error) {
 	body, err := b.get("/guilds/" + guildid + "/emojis")
 	if err != nil {
 		return nil, err
 	}
 
-	var emojis []Emoji
+	var emojis []*Emoji
 	if err = json.Unmarshal(body, &emojis); err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (b *bot) GetEmojis(guildid string) (*[]Emoji, error) {
 		emojis[i].GuildID = guildid
 	}
 
-	return &emojis, nil
+	return emojis, nil
 }
 
 func (b *bot) GetEmoji(guildid string, emojiid string) (*Emoji, error) {

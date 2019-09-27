@@ -20,7 +20,7 @@ type (
 	}
 )
 
-func (m *model) AddEmojis(emojis *[]discord.Emoji) (err error) {
+func (m *model) AddEmojis(emojis []*discord.Emoji) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {
 		return
@@ -33,17 +33,17 @@ func (m *model) AddEmojis(emojis *[]discord.Emoji) (err error) {
 		err = tx.Commit()
 	}()
 
-	for _, emoji := range *emojis {
+	for i := range emojis {
 		_, err = tx.Exec(`INSERT INTO discord_emojis
 						VALUES (?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
 						user_id = VALUES(user_id),
 						name = VALUES(name)`,
-			emoji.ID,
-			emoji.GuildID,
-			emoji.User.ID,
-			emoji.Name,
-			emoji.Animated)
+			emojis[i].ID,
+			emojis[i].GuildID,
+			emojis[i].User.ID,
+			emojis[i].Name,
+			emojis[i].Animated)
 		if err != nil {
 			return
 		}
@@ -66,7 +66,7 @@ func (m *model) AddEmoji(emoji *discord.Emoji) (err error) {
 	return
 }
 
-func (m *model) AddUserEmojis(userEmojis *[]UserEmoji) (err error) {
+func (m *model) AddUserEmojis(userEmojis []*UserEmoji) (err error) {
 	tx, err := m.db.Begin()
 	if err != nil {
 		return
@@ -79,14 +79,14 @@ func (m *model) AddUserEmojis(userEmojis *[]UserEmoji) (err error) {
 		err = tx.Commit()
 	}()
 
-	for _, ue := range *userEmojis {
+	for i := range userEmojis {
 		_, err = tx.Exec(`INSERT INTO users__discord_emojis
 						VALUES (?, ?, ?)
 						ON DUPLICATE KEY UPDATE
 						is_enabled = VALUES(is_enabled)`,
-			ue.UserID,
-			ue.EmojiID,
-			ue.Enabled)
+			userEmojis[i].UserID,
+			userEmojis[i].EmojiID,
+			userEmojis[i].Enabled)
 		if err != nil {
 			return
 		}

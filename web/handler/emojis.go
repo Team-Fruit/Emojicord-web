@@ -28,14 +28,18 @@ func (h *handler) GetEmojis(c echo.Context) error {
 
 	// Guilds Update
 	// users__discord_guilds
-	ug := make([]model.UserGuild, 0, len(*botGuilds))
-	for _, g := range *userGuilds {
+	ug := make([]*model.UserGuild, 0, len(botGuilds))
+	for i := range userGuilds {
+		g := userGuilds[i]
+
 		permissions := uint(g.Permissions)
 		canInvite := (permissions & 0x20) == 0x20
 
-		for _, b := range *botGuilds {
+		for j := range botGuilds {
+			b := botGuilds[j]
+
 			if g.ID == b.ID {
-				ug = append(ug, model.UserGuild{
+				ug = append(ug, &model.UserGuild{
 					UserID:      id,
 					GuildID:     g.ID,
 					IsOwner:     g.Owner,
@@ -47,7 +51,7 @@ func (h *handler) GetEmojis(c echo.Context) error {
 		}
 	}
 
-	err = h.Model.AddUserGuilds(&ug)
+	err = h.Model.AddUserGuilds(ug)
 	if err != nil {
 		return err
 	}

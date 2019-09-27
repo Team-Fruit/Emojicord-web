@@ -14,18 +14,18 @@ func (h *handler) Init() error {
 		return err
 	}
 
-	for _, lg := range *localGuilds {
+	for i := range localGuilds {
 		var exists = false
-		for _, rg := range *remoteGuilds {
-			if lg.ID == rg.ID {
+		for j := range remoteGuilds {
+			if localGuilds[i].ID == remoteGuilds[j].ID {
 				exists = true
 				break
 			}
 		}
 
 		if !exists {
-			lg.BotExists = false
-			if err := h.Model.UpdateGuild(&lg); err != nil {
+			localGuilds[i].BotExists = false
+			if err := h.Model.UpdateGuild(localGuilds[i]); err != nil {
 				return err
 			}
 		}

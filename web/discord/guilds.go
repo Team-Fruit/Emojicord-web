@@ -14,33 +14,33 @@ type Guild struct {
 	Name        string `json:"name"`
 }
 
-func (u *user) GetGuilds(token *oauth2.Token) (*[]Guild, error) {
+func (u *user) GetGuilds(token *oauth2.Token) ([]*Guild, error) {
 	body, err := u.get("/users/@me/guilds", token)
 	if err != nil {
 		return nil, err
 	}
 
-	var guilds []Guild
+	var guilds []*Guild
 	if err = json.Unmarshal(body, &guilds); err != nil {
 		return nil, err
 	}
 	
-	return &guilds, err
+	return guilds, err
 }
 
-func (b *bot) GetGuilds() (*[]Guild, error) {
+func (b *bot) GetGuilds() ([]*Guild, error) {
 	body, err := b.get("/users/@me/guilds")
 	if err != nil {
 		return nil, err
 	}
 
-	var guilds []Guild
+	var guilds []*Guild
 	if err = json.Unmarshal(body, &guilds); err != nil {
 		return nil, err
 	}
 
 	if len(guilds) < 100 {
-		return &guilds, nil
+		return guilds, nil
 	}
 
 	for {
@@ -51,7 +51,7 @@ func (b *bot) GetGuilds() (*[]Guild, error) {
 			return nil, err
 		}
 	
-		var page []Guild
+		var page []*Guild
 		if err = json.Unmarshal(body, &page); err != nil {
 			return nil, err
 		}
@@ -63,5 +63,5 @@ func (b *bot) GetGuilds() (*[]Guild, error) {
 		}
 	}
 
-	return &guilds, err
+	return guilds, err
 }
