@@ -6,17 +6,11 @@ import (
 
 type (
 	Emoji struct {
-		ID       string `db:"id"`
-		GuildID  string `db:"guild_id"`
-		UserID   string `db:"user_id"`
-		Name     string `db:"name"`
-		Animated bool   `db:"is_animated"`
-	}
-
-	UserEmoji struct {
-		UserID  string `db:"user_id"`
-		EmojiID string `db:"emoji_id"`
-		Enabled bool   `db:"is_enabled"`
+		ID       string `json:"id" db:"id"`
+		GuildID  string `json:"guildid" db:"guild_id"`
+		UserID   string `json:"userid" db:"user_id"`
+		Name     string `json:"name" db:"name"`
+		Animated bool   `json:"animated" db:"is_animated"`
 	}
 )
 
@@ -66,31 +60,21 @@ func (m *model) AddEmoji(emoji *discord.Emoji) (err error) {
 	return
 }
 
-func (m *model) AddUserEmojis(userEmojis []*UserEmoji) (err error) {
-	tx, err := m.db.Begin()
-	if err != nil {
-		return
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
-	for i := range userEmojis {
-		_, err = tx.Exec(`INSERT INTO users__discord_emojis
-						VALUES (?, ?, ?)
-						ON DUPLICATE KEY UPDATE
-						is_enabled = VALUES(is_enabled)`,
-			userEmojis[i].UserID,
-			userEmojis[i].EmojiID,
-			userEmojis[i].Enabled)
-		if err != nil {
-			return
-		}
-	}
-
+func (m *model) AddUserEmojis(userid string) (err error) {
+	_, err = m.db.Exec(`INSERT IGNORE INTO users__discord_emojis (user_id, emoji_id, is_enabled) 
+						SELECT users__discord_guilds.user_id, discord_emojis.id, true FROM discord_emojis 
+						INNER JOIN users__discord_guilds 
+						ON discord_emojis.guild_id = users__discord_guilds.guild_id 
+						AND users__discord_guilds.user_id = ?`,
+		userid)
 	return
+}
+
+func (m *model) GetUserEmojis(userid string) ([]*Emoji, error) {
+	emojis := []*Emoji{}
+	if err := m.db.Select(&emojis, `SELECT * FROM discord_emojis WHERE id 
+									IN (SELECT emoji_id FROM users__discord_emojis WHERE user_id = ?)`, userid); err != nil {
+		return nil, err
+	}
+	return emojis, nil
 }

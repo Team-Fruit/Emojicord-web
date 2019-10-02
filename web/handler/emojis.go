@@ -1,9 +1,18 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/Team-Fruit/Emojicord-web/web/model"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
+)
+
+type (
+	Emojis struct {
+		Emoji []*model.Emoji `json:"emojis"`
+		Guild []*model.Guild `json:"guilds"`
+	}
 )
 
 func (h *handler) GetEmojis(c echo.Context) error {
@@ -56,5 +65,25 @@ func (h *handler) GetEmojis(c echo.Context) error {
 		return err
 	}
 
-	return c.String(200, "OK")
+	res := Emojis{}
+
+	guild, err := h.Model.GetBotAndUserExistsGuilds(id)
+	if err != nil {
+		return err
+	}
+
+	res.Guild = guild
+
+	if err := h.Model.AddUserEmojis(id); err != nil {
+		return err
+	}
+
+	emoji, err := h.Model.GetUserEmojis(id)
+	if err != nil {
+		return err
+	}
+
+	res.Emoji = emoji
+
+	return c.JSON(http.StatusOK, res)
 }

@@ -5,7 +5,7 @@ type (
 		ID        string `json:"id" db:"id"`
 		Name      string `json:"name" db:"name"`
 		Icon      string `json:"icon" db:"icon"`
-		BotExists bool   `db:"is_bot_exists"`
+		BotExists bool   `json:"-" db:"is_bot_exists"`
 	}
 
 	UserGuild struct {
@@ -120,4 +120,14 @@ func (m *model) UpdateGuildBotExists(id string, exists bool) (err error) {
 						is_bot_exists=? 
 						WHERE id=?`, exists, id)
 	return err
+}
+
+func (m *model) GetBotAndUserExistsGuilds(userid string) ([]*Guild, error) {
+	guilds := []*Guild{}
+	if err := m.db.Select(&guilds, `SELECT id, name, icon FROM discord_guilds 
+									WHERE is_bot_exists = true 
+									AND id IN (SELECT guild_id FROM users__discord_guilds WHERE user_id = ?)`, userid); err != nil {
+		return nil, err
+	}
+	return guilds, nil
 }
