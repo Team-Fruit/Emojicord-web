@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users` (
     `id`               VARCHAR(64)    NOT NULL,
     `username`         VARCHAR(32)    NOT NULL,
     `discriminator`    VARCHAR(4)     NOT NULL,
-    `avatar`           VARCHAR(32)    NOT NULL,
+    `avatar`           VARCHAR(34)    NOT NULL,
     `locale`           VARCHAR(16),
     `created_at`       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `last_login`       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis` (
     `user_id`              VARCHAR(64)   NOT NULL,
     `user_username`        VARCHAR(32)   NOT NULL,
     `user_discriminator`   VARCHAR(4)    NOT NULL,
-    `user_avatar`          VARCHAR(32)   NOT NULL,
+    `user_avatar`          VARCHAR(34)   NOT NULL,
 
     PRIMARY KEY ( `id` ),
 
