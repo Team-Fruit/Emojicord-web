@@ -9,7 +9,7 @@ type (
 		UserName      string `json:"username"`
 		Discriminator string `json:"discriminator"`
 		ID            string `json:"id"`
-		avatar        string `json:"avatar"`
+		Avatar        string `json:"avatar"`
 	}
 
 	Emoji struct {

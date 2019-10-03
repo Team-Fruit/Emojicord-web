@@ -59,11 +59,14 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_guilds` (
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis` (
-    `id`            VARCHAR(64)   NOT NULL,
-    `guild_id`      VARCHAR(64)   NOT NULL,
-    `user_id`       VARCHAR(64)   NOT NULL,
-    `name`          VARCHAR(32)   NOT NULL,
-    `is_animated`   BOOLEAN       NOT NULL,
+    `id`                   VARCHAR(64)   NOT NULL,
+    `guild_id`             VARCHAR(64)   NOT NULL,
+    `name`                 VARCHAR(32)   NOT NULL,
+    `is_animated`          BOOLEAN       NOT NULL,
+    `user_id`              VARCHAR(64)   NOT NULL,
+    `user_username`        VARCHAR(32)   NOT NULL,
+    `user_discriminator`   VARCHAR(4)    NOT NULL,
+    `user_avatar`          VARCHAR(32)   NOT NULL,
 
     PRIMARY KEY ( `id` ),
 

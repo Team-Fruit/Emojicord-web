@@ -6,11 +6,14 @@ import (
 
 type (
 	Emoji struct {
-		ID       string `json:"id" db:"id"`
-		GuildID  string `json:"guildid" db:"guild_id"`
-		UserID   string `json:"userid" db:"user_id"`
-		Name     string `json:"name" db:"name"`
-		Animated bool   `json:"animated" db:"is_animated"`
+		ID                string `json:"id" db:"id"`
+		GuildID           string `json:"guildid" db:"guild_id"`
+		Name              string `json:"name" db:"name"`
+		Animated          bool   `json:"animated" db:"is_animated"`
+		UserID            string `json:"userid" db:"user_id"`
+		UserName          string `json:"username" db:"user_username"`
+		UserDiscriminator string `json:"userdiscriminator" db:"user_discriminator"`
+		UserAvatar        string `json:"useravatar" db:"user_avatar"`
 	}
 )
 
@@ -29,15 +32,18 @@ func (m *model) AddEmojis(emojis []*discord.Emoji) (err error) {
 
 	for i := range emojis {
 		_, err = tx.Exec(`INSERT INTO discord_emojis
-						VALUES (?, ?, ?, ?, ?)
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
 						user_id = VALUES(user_id),
 						name = VALUES(name)`,
 			emojis[i].ID,
 			emojis[i].GuildID,
-			emojis[i].User.ID,
 			emojis[i].Name,
-			emojis[i].Animated)
+			emojis[i].Animated,
+			emojis[i].User.ID,
+			emojis[i].User.UserName,
+			emojis[i].User.Discriminator,
+			emojis[i].User.Avatar)
 		if err != nil {
 			return
 		}
@@ -48,15 +54,18 @@ func (m *model) AddEmojis(emojis []*discord.Emoji) (err error) {
 
 func (m *model) AddEmoji(emoji *discord.Emoji) (err error) {
 	_, err = m.db.Exec(`INSERT INTO discord_emojis
-						VALUES (?, ?, ?, ?, ?)
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
 						user_id = VALUES(user_id),
 						name = VALUES(name)`,
 		emoji.ID,
 		emoji.GuildID,
-		emoji.User.ID,
 		emoji.Name,
-		emoji.Animated)
+		emoji.Animated,
+		emoji.User.ID,
+		emoji.User.UserName,
+		emoji.User.Discriminator,
+		emoji.User.Avatar)
 	return
 }
 
