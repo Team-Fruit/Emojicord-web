@@ -11,10 +11,14 @@ type (
 		Name              string `json:"name" db:"name"`
 		Animated          bool   `json:"animated" db:"is_animated"`
 		UserID            string `json:"userid" db:"user_id"`
-		UserName          string `json:"username" db:"username"`
-		UserDiscriminator string `json:"userdiscriminator" db:"discriminator"`
-		UserAvatar        string `json:"useravatar" db:"avatar"`
 		Enabled           bool   `json:"enabled" db:"is_enabled"`
+	}
+
+	EmojiUser struct {
+		UserID            string `json:"id" db:"id"`
+		UserName          string `json:"name" db:"username"`
+		UserDiscriminator string `json:"discriminator" db:"discriminator"`
+		UserAvatar        string `json:"avatar" db:"avatar"`
 	}
 )
 
@@ -121,17 +125,25 @@ func (m *model) GetUserEmojis(userid string) ([]*Emoji, error) {
 									discord_emojis.name, 
 									discord_emojis.is_animated, 
 									discord_emojis.user_id, 
-									discord_emojis_users.username, 
-									discord_emojis_users.discriminator, 
-									discord_emojis_users.avatar, 
 									users__discord_emojis.is_enabled 
 									FROM discord_emojis 
 									INNER JOIN users__discord_emojis 
 									ON discord_emojis.id = users__discord_emojis.emoji_id 
-									INNER JOIN discord_emojis_users
-									ON discord_emojis.user_id = discord_emojis_users.id
-									WHERE users__discord_emojis.user_id = ?;`, userid); err != nil {
+									WHERE users__discord_emojis.user_id = ?`, userid); err != nil {
 		return nil, err
 	}
 	return emojis, nil
+}
+
+func (m *model) GetEmojiUsers(userid string) ([]*EmojiUser, error) {
+	users := []*EmojiUser{}
+	if err := m.db.Select(&users, `SELECT * FROM discord_emojis_users
+									WHERE id IN 
+									(SELECT discord_emojis.user_id FROM discord_emojis
+									INNER JOIN users__discord_emojis
+									ON discord_emojis.id = users__discord_emojis.emoji_id
+									WHERE users__discord_emojis.user_id = ?)`, userid); err != nil {
+		return nil, err
+	}
+	return users, nil
 }

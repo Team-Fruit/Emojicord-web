@@ -10,8 +10,9 @@ import (
 
 type (
 	Emojis struct {
-		Emoji []*model.Emoji `json:"emojis"`
-		Guild []*model.Guild `json:"guilds"`
+		Emoji     []*model.Emoji     `json:"emojis"`
+		Guild     []*model.Guild     `json:"guilds"`
+		EmojiUser []*model.EmojiUser `json:"users"`
 	}
 )
 
@@ -84,6 +85,13 @@ func (h *handler) GetEmojis(c echo.Context) error {
 	}
 
 	res.Emoji = emoji
+
+	emojiUser, err := h.Model.GetEmojiUsers(id)
+	if err != nil {
+		return err
+	}
+
+	res.EmojiUser = emojiUser
 
 	return c.JSON(http.StatusOK, res)
 }

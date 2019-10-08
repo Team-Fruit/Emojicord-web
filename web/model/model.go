@@ -26,6 +26,7 @@ type (
 		AddEmoji(emoji *discord.Emoji) (err error)
 		AddUserEmojis(userid string) (err error)
 		GetUserEmojis(userid string) ([]*Emoji, error)
+		GetEmojiUsers(userid string) ([]*EmojiUser, error)
 	}
 )
 
