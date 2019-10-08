@@ -10,7 +10,7 @@ type (
 		GuildID           string `json:"guildid" db:"guild_id"`
 		Name              string `json:"name" db:"name"`
 		Animated          bool   `json:"animated" db:"is_animated"`
-		UserID            string `json:"userid" db:"id"`
+		UserID            string `json:"userid" db:"user_id"`
 		UserName          string `json:"username" db:"username"`
 		UserDiscriminator string `json:"userdiscriminator" db:"discriminator"`
 		UserAvatar        string `json:"useravatar" db:"avatar"`
@@ -120,7 +120,7 @@ func (m *model) GetUserEmojis(userid string) ([]*Emoji, error) {
 									discord_emojis.guild_id, 
 									discord_emojis.name, 
 									discord_emojis.is_animated, 
-									discord_emojis_users.id, 
+									discord_emojis.user_id, 
 									discord_emojis_users.username, 
 									discord_emojis_users.discriminator, 
 									discord_emojis_users.avatar, 
