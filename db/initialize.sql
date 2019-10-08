@@ -58,21 +58,31 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_guilds` (
         ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis_users` (
+    `id`              VARCHAR(64)   NOT NULL,
+    `username`        VARCHAR(32)   NOT NULL,
+    `discriminator`   VARCHAR(4)    NOT NULL,
+    `avatar`          VARCHAR(34)   NOT NULL,
+
+    PRIMARY KEY ( `id` )
+);
+
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis` (
     `id`                   VARCHAR(64)   NOT NULL,
     `guild_id`             VARCHAR(64)   NOT NULL,
     `name`                 VARCHAR(32)   NOT NULL,
     `is_animated`          BOOLEAN       NOT NULL,
     `user_id`              VARCHAR(64)   NOT NULL,
-    `user_username`        VARCHAR(32)   NOT NULL,
-    `user_discriminator`   VARCHAR(4)    NOT NULL,
-    `user_avatar`          VARCHAR(34)   NOT NULL,
 
     PRIMARY KEY ( `id` ),
 
     CONSTRAINT `fk__discord_guilds__discord_emojis`
         FOREIGN KEY ( `guild_id` )
         REFERENCES `emojicord_db`.`discord_guilds` ( `id` )
+        ON DELETE CASCADE,
+    CONSTRAINT `fk__discord_emojis_users__discord_emojis`
+        FOREIGN KEY ( `user_id` )
+        REFERENCES `emojicord_db`.`discord_emojis_users` ( `id` )
         ON DELETE CASCADE
 );
 
