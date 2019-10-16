@@ -1,17 +1,19 @@
 package model
 
 import (
+	"github.com/jmoiron/sqlx"
+
 	"github.com/Team-Fruit/Emojicord-web/web/discord"
 )
 
 type (
 	Emoji struct {
-		ID                string `json:"id" db:"id"`
-		GuildID           string `json:"guildid" db:"guild_id"`
-		Name              string `json:"name" db:"name"`
-		Animated          bool   `json:"animated" db:"is_animated"`
-		UserID            string `json:"userid" db:"user_id"`
-		Enabled           bool   `json:"enabled" db:"is_enabled"`
+		ID       string `json:"id" db:"id"`
+		GuildID  string `json:"guildid" db:"guild_id"`
+		Name     string `json:"name" db:"name"`
+		Animated bool   `json:"animated" db:"is_animated"`
+		UserID   string `json:"userid" db:"user_id"`
+		Enabled  bool   `json:"enabled" db:"is_enabled"`
 	}
 
 	EmojiUser struct {
@@ -19,6 +21,18 @@ type (
 		UserName          string `json:"name" db:"username"`
 		UserDiscriminator string `json:"discriminator" db:"discriminator"`
 		UserAvatar        string `json:"avatar" db:"avatar"`
+	}
+
+	UpdateEmoji struct {
+		UserID  string
+		EmojiID string
+		Enabled  bool
+	}
+
+	UpdateEmojis struct {
+		UserID  string
+		EmojiID []string
+		Enabled  bool
 	}
 )
 
@@ -146,4 +160,27 @@ func (m *model) GetEmojiUsers(userid string) ([]*EmojiUser, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (m *model) UpdateUserEmoji(obj UpdateEmoji) (err error) {
+	_, err = m.db.NamedExec(`UPDATE users__discord_emojis SET is_enabled = :enabled
+							WHERE user_id = :userid AND emoji_id = :emojiid`, obj)
+	return
+}
+
+func (m *model) UpdateUserEmojis(obj UpdateEmojis) (err error) {
+	query, args, err := sqlx.Named(`UPDATE users__discord_emojis SET is_enabled = :enabled 
+									WHERE user_id = :userid AND emoji_id IN (:emojiid)`, obj)
+	if err != nil {
+		return err
+	}
+
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+		return err
+	}
+
+	query = m.db.Rebind(query)
+	_, err = m.db.Exec(query, args...)
+	return
 }
