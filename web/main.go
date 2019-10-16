@@ -64,10 +64,10 @@ func main() {
 	g.Use(middleware.JWTWithConfig(config))
 	g.GET("/guilds", h.GetGuilds)
 	g.GET("/emojis", h.GetEmojis)
-	g.PUT("/emojis", h.PutEmojis)
-	g.DELETE("/emojis", h.DeleteEmojis)
-	g.PUT("/emojis/:id", h.PutEmoji)
-	g.DELETE("/emojis/:id", h.DeleteEmoji)
+	// g.PUT("/emojis", h.PutEmojis)
+	// g.DELETE("/emojis", h.DeleteEmojis)
+	g.PUT("/emojis/:id", h.PutEmojis)
+	g.DELETE("/emojis/:id", h.DeleteEmojis)
 
 	e.Logger.Fatal(e.Start(":8082"))
 }

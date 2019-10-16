@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/Team-Fruit/Emojicord-web/web/model"
 	"github.com/dgrijalva/jwt-go"
@@ -96,51 +97,13 @@ func (h *handler) GetEmojis(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-func (h *handler) PutEmoji(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*JWTClaims)
-	id := claims.ID
-
-	emojiid := c.Param("id")
-
-	if err := h.Model.UpdateUserEmoji(model.UpdateEmoji{
-		Enabled: true,
-		UserID:  id,
-		EmojiID: emojiid,
-	}); err != nil {
-		return err
-	}
-
-	return c.NoContent(http.StatusNoContent)
-}
-
-func (h *handler) DeleteEmoji(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*JWTClaims)
-	id := claims.ID
-
-	emojiid := c.Param("id")
-
-	if err := h.Model.UpdateUserEmoji(model.UpdateEmoji{
-		Enabled: false,
-		UserID:  id,
-		EmojiID: emojiid,
-	}); err != nil {
-		return err
-	}
-
-	return c.NoContent(http.StatusNoContent)
-}
-
 func (h *handler) PutEmojis(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*JWTClaims)
 	id := claims.ID
 
-	emojiids := []string{}
-	if err := c.Bind(&emojiids); err != nil {
-		return err
-	}
+	param := c.Param("id")
+	emojiids := strings.Split(param, ",")
 
 	if err := h.Model.UpdateUserEmojis(model.UpdateEmojis{
 		Enabled: true,
@@ -158,10 +121,8 @@ func (h *handler) DeleteEmojis(c echo.Context) error {
 	claims := user.Claims.(*JWTClaims)
 	id := claims.ID
 
-	emojiids := []string{}
-	if err := c.Bind(&emojiids); err != nil {
-		return err
-	}
+	param := c.Param("id")
+	emojiids := strings.Split(param, ",")
 
 	if err := h.Model.UpdateUserEmojis(model.UpdateEmojis{
 		Enabled: false,
