@@ -2,6 +2,7 @@ package discord
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"golang.org/x/oauth2"
 )
@@ -10,7 +11,7 @@ type Guild struct {
 	Owner       bool   `json:"owner"`
 	Permissions int    `json:"permissions"`
 	Icon        string `json:"icon"`
-	ID          string `json:"id"`
+	ID          uint64 `json:"id,string"`
 	Name        string `json:"name"`
 }
 
@@ -46,7 +47,7 @@ func (b *bot) GetGuilds() ([]*Guild, error) {
 	for {
 		last := guilds[len(guilds)-1].ID
 
-		body, err := b.get("/users/@me/guilds?after=" + last)
+		body, err := b.get("/users/@me/guilds?after=" + strconv.FormatUint(last, 10))
 		if err != nil {
 			return nil, err
 		}

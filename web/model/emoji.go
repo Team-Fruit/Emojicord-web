@@ -8,23 +8,23 @@ import (
 
 type (
 	Emoji struct {
-		ID       string `json:"id" db:"id"`
-		GuildID  string `json:"guildid" db:"guild_id"`
+		ID       uint64 `json:"id,string" db:"id"`
+		GuildID  uint64 `json:"guildid,string" db:"guild_id"`
 		Name     string `json:"name" db:"name"`
 		Animated bool   `json:"animated" db:"is_animated"`
-		UserID   string `json:"userid" db:"user_id"`
+		UserID   uint64 `json:"userid,string" db:"user_id"`
 		Enabled  bool   `json:"enabled" db:"is_enabled"`
 	}
 
 	EmojiUser struct {
-		UserID            string `json:"id" db:"id"`
+		UserID            uint64 `json:"id,string" db:"id"`
 		UserName          string `json:"name" db:"username"`
 		UserDiscriminator string `json:"discriminator" db:"discriminator"`
 		UserAvatar        string `json:"avatar" db:"avatar"`
 	}
 
 	UpdateEmojis struct {
-		UserID  string
+		UserID  uint64
 		EmojiID []string
 		Enabled  bool
 	}
@@ -116,7 +116,7 @@ func (m *model) AddEmoji(emoji *discord.Emoji) (err error) {
 	return
 }
 
-func (m *model) AddUserEmojis(userid string) (err error) {
+func (m *model) AddUserEmojis(userid uint64) (err error) {
 	_, err = m.db.Exec(`INSERT IGNORE INTO users__discord_emojis (user_id, emoji_id, is_enabled) 
 						SELECT users__discord_guilds.user_id, discord_emojis.id, true FROM discord_emojis 
 						INNER JOIN users__discord_guilds 
@@ -126,7 +126,7 @@ func (m *model) AddUserEmojis(userid string) (err error) {
 	return
 }
 
-func (m *model) GetUserEmojis(userid string) ([]*Emoji, error) {
+func (m *model) GetUserEmojis(userid uint64) ([]*Emoji, error) {
 	emojis := []*Emoji{}
 	if err := m.db.Select(&emojis, `SELECT discord_emojis.id, 
 									discord_emojis.guild_id, 
@@ -143,7 +143,7 @@ func (m *model) GetUserEmojis(userid string) ([]*Emoji, error) {
 	return emojis, nil
 }
 
-func (m *model) GetEmojiUsers(userid string) ([]*EmojiUser, error) {
+func (m *model) GetEmojiUsers(userid uint64) ([]*EmojiUser, error) {
 	users := []*EmojiUser{}
 	if err := m.db.Select(&users, `SELECT * FROM discord_emojis_users
 									WHERE id IN 

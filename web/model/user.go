@@ -2,7 +2,7 @@ package model
 
 type (
 	User struct {
-		ID            string `json:"id" db:"id"`
+		ID            uint64 `json:"id,string" db:"id"`
 		Username      string `json:"username" db:"username"`
 		Discriminator string `json:"discriminator" db:"discriminator"`
 		Avatar        string `json:"avatar" db:"avatar"`

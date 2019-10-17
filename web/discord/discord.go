@@ -17,8 +17,8 @@ type (
 
 	BotClient interface {
 		GetGuilds() (guild []*Guild, err error)
-		GetEmojis(guildid string) ([]*Emoji, error)
-		GetEmoji(guildid string, emojiid string) (*Emoji, error)
+		GetEmojis(guildid uint64) ([]*Emoji, error)
+		GetEmoji(guildid uint64, emojiid string) (*Emoji, error)
 	}
 
 	user struct {

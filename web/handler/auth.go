@@ -25,7 +25,7 @@ type JWTClaims struct {
 	Locale        string `json:"locale"`
 	Avater        string `json:"avater"`
 	Discriminator string `json:"discriminator"`
-	ID            string `json:"id"`
+	ID            uint64 `json:"id,string"`
 	jwt.StandardClaims
 }
 

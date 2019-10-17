@@ -2,15 +2,15 @@ package model
 
 type (
 	Guild struct {
-		ID        string `json:"id" db:"id"`
+		ID        uint64 `json:"id,string" db:"id"`
 		Name      string `json:"name" db:"name"`
 		Icon      string `json:"icon" db:"icon"`
 		BotExists bool   `json:"-" db:"is_bot_exists"`
 	}
 
 	UserGuild struct {
-		UserID      string `db:"user_id"`
-		GuildID     string `json:"id" db:"guild_id"`
+		UserID      uint64 `db:"user_id"`
+		GuildID     uint64 `json:"id,string" db:"guild_id"`
 		IsOwner     bool   `json:"owner" db:"is_owner"`
 		Permissions uint   `json:"permissions" db:"permissions"`
 		CanInvite   bool   `db:"can_invite"`
@@ -115,14 +115,14 @@ func (m *model) UpdateGuild(guild *Guild) (err error) {
 	return err
 }
 
-func (m *model) UpdateGuildBotExists(id string, exists bool) (err error) {
+func (m *model) UpdateGuildBotExists(id uint64, exists bool) (err error) {
 	_, err = m.db.Exec(`UPDATE discord_guilds SET 
 						is_bot_exists=? 
 						WHERE id=?`, exists, id)
 	return err
 }
 
-func (m *model) GetBotAndUserExistsGuilds(userid string) ([]*Guild, error) {
+func (m *model) GetBotAndUserExistsGuilds(userid uint64) ([]*Guild, error) {
 	guilds := []*Guild{}
 	if err := m.db.Select(&guilds, `SELECT id, name, icon FROM discord_guilds 
 									WHERE is_bot_exists = true 

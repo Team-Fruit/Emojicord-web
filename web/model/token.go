@@ -6,7 +6,7 @@ import (
 )
 
 type Token struct {
-	UserID       string    `db:"user_id"`
+	UserID       uint64    `db:"user_id"`
 	AccessToken  string    `db:"access_token"`
 	TokenType    string    `db:"token_type"`
 	RefreshToken string    `db:"refresh_token"`
@@ -22,7 +22,7 @@ func (t *Token) ToOAuth2Token() *oauth2.Token {
 	}
 }
 
-func ToModelToken(id string, t *oauth2.Token) *Token {
+func ToModelToken(id uint64, t *oauth2.Token) *Token {
 	return &Token{
 		UserID: id,
 		AccessToken: t.AccessToken,
@@ -32,7 +32,7 @@ func ToModelToken(id string, t *oauth2.Token) *Token {
 	}
 }
 
-func (m *model) GetToken(id string) (*Token, error) {
+func (m *model) GetToken(id uint64) (*Token, error) {
 	var token Token
 	if err := m.db.Get(&token, "SELECT * FROM users__discord_tokens WHERE user_id = ?", id); err != nil {
 		return nil, err

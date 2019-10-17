@@ -10,7 +10,7 @@ import (
 )
 
 type Guild struct {
-	ID        string `json:"id"`
+	ID        uint64 `json:"id,string"`
 	Name      string `json:"name"`
 	Icon      string `json:"icon"`
 	Owner     bool   `json:"owner"`

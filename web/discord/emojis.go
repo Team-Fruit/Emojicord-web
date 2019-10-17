@@ -2,27 +2,28 @@ package discord
 
 import (
 	"encoding/json"
+	"strconv"
 )
 
 type (
 	EmojiUser struct {
 		UserName      string `json:"username"`
 		Discriminator string `json:"discriminator"`
-		ID            string `json:"id"`
+		ID            uint64 `json:"id,string"`
 		Avatar        string `json:"avatar"`
 	}
 
 	Emoji struct {
-		ID       string    `json:"id"`
+		ID       uint64    `json:"id,string"`
 		Name     string    `json:"name"`
 		User     EmojiUser `json:"user"`
 		Animated bool      `json:"animated"`
-		GuildID  string
+		GuildID  uint64
 	}
 )
 
-func (b *bot) GetEmojis(guildid string) ([]*Emoji, error) {
-	body, err := b.get("/guilds/" + guildid + "/emojis")
+func (b *bot) GetEmojis(guildid uint64) ([]*Emoji, error) {
+	body, err := b.get("/guilds/" + strconv.FormatUint(guildid, 10) + "/emojis")
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +40,8 @@ func (b *bot) GetEmojis(guildid string) ([]*Emoji, error) {
 	return emojis, nil
 }
 
-func (b *bot) GetEmoji(guildid string, emojiid string) (*Emoji, error) {
-	body, err := b.get("/guilds/"+guildid+"/emojis/"+emojiid)
+func (b *bot) GetEmoji(guildid uint64, emojiid string) (*Emoji, error) {
+	body, err := b.get("/guilds/" + strconv.FormatUint(guildid, 10) + "/emojis/" + emojiid)
 	if err != nil {
 		return nil, err
 	}
