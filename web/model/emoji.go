@@ -23,12 +23,6 @@ type (
 		UserAvatar        string `json:"avatar" db:"avatar"`
 	}
 
-	UpdateEmoji struct {
-		UserID  string
-		EmojiID string
-		Enabled  bool
-	}
-
 	UpdateEmojis struct {
 		UserID  string
 		EmojiID []string
@@ -160,12 +154,6 @@ func (m *model) GetEmojiUsers(userid string) ([]*EmojiUser, error) {
 		return nil, err
 	}
 	return users, nil
-}
-
-func (m *model) UpdateUserEmoji(obj UpdateEmoji) (err error) {
-	_, err = m.db.NamedExec(`UPDATE users__discord_emojis SET is_enabled = :enabled
-							WHERE user_id = :userid AND emoji_id = :emojiid`, obj)
-	return
 }
 
 func (m *model) UpdateUserEmojis(obj UpdateEmojis) (err error) {

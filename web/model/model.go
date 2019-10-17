@@ -27,7 +27,6 @@ type (
 		AddUserEmojis(userid string) (err error)
 		GetUserEmojis(userid string) ([]*Emoji, error)
 		GetEmojiUsers(userid string) ([]*EmojiUser, error)
-		UpdateUserEmoji(obj UpdateEmoji) (err error)
 		UpdateUserEmojis(obj UpdateEmojis) (err error)
 	}
 )
