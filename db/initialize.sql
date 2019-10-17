@@ -4,23 +4,23 @@ GRANT INSERT,SELECT,UPDATE,DELETE ON `emojicord_db`.* TO `emojicord`@`%`;
 CREATE DATABASE IF NOT EXISTS `emojicord_db`;
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`users` (
-    `id`               VARCHAR(64)    NOT NULL,
-    `username`         VARCHAR(32)    NOT NULL,
-    `discriminator`    VARCHAR(4)     NOT NULL,
-    `avatar`           VARCHAR(34)    NOT NULL,
+    `id`               BIGINT UNSIGNED         NOT NULL,
+    `username`         VARCHAR(32)             NOT NULL,
+    `discriminator`    SMALLINT(4) ZEROFILL    NOT NULL,
+    `avatar`           VARCHAR(34)             NOT NULL,
     `locale`           VARCHAR(16),
-    `created_at`       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `last_login`       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at`       TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `last_login`       TIMESTAMP               NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ( `id` )
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_tokens` (
-    `user_id`          VARCHAR(64)     NOT NULL,
-    `access_token`     VARCHAR(255)    NOT NULL,
-    `token_type`       VARCHAR(6)      NOT NULL,
-    `refresh_token`    VARCHAR(255)    NOT NULL,
-    `expiry`           TIMESTAMP       NOT NULL,
+    `user_id`          BIGINT UNSIGNED     NOT NULL,
+    `access_token`     VARCHAR(255)        NOT NULL,
+    `token_type`       VARCHAR(6)          NOT NULL,
+    `refresh_token`    VARCHAR(255)        NOT NULL,
+    `expiry`           TIMESTAMP           NOT NULL,
 
     PRIMARY KEY ( `user_id` ),
 
@@ -31,20 +31,20 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_tokens` (
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_guilds` (
-    `id`                  VARCHAR(64)     NOT NULL,
-    `name`                VARCHAR(100)    NOT NULL,
-    `icon`                VARCHAR(255)    NOT NULL,
-    `is_bot_exists`       BOOLEAN         NOT NULL,
+    `id`                  BIGINT UNSIGNED    NOT NULL,
+    `name`                VARCHAR(100)       NOT NULL,
+    `icon`                VARCHAR(255)       NOT NULL,
+    `is_bot_exists`       BOOLEAN            NOT NULL,
 
     PRIMARY KEY ( `id` )
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_guilds` (
-    `user_id`        VARCHAR(64)     NOT NULL,
-    `guild_id`       VARCHAR(64)     NOT NULL,
-    `is_owner`       BOOLEAN         NOT NULL,
-    `permissions`    INT UNSIGNED    NOT NULL,
-    `can_invite`     BOOLEAN         NOT NULL,
+    `user_id`        BIGINT UNSIGNED    NOT NULL,
+    `guild_id`       BIGINT UNSIGNED    NOT NULL,
+    `is_owner`       BOOLEAN            NOT NULL,
+    `permissions`    INT UNSIGNED       NOT NULL,
+    `can_invite`     BOOLEAN            NOT NULL,
     
     PRIMARY KEY ( `user_id`, `guild_id` ),
 
@@ -59,20 +59,20 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_guilds` (
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis_users` (
-    `id`              VARCHAR(64)   NOT NULL,
-    `username`        VARCHAR(32)   NOT NULL,
-    `discriminator`   VARCHAR(4)    NOT NULL,
-    `avatar`          VARCHAR(34)   NOT NULL,
+    `id`               BIGINT UNSIGNED         NOT NULL,
+    `username`         VARCHAR(32)             NOT NULL,
+    `discriminator`    SMALLINT(4) ZEROFILL    NOT NULL,
+    `avatar`           VARCHAR(34)             NOT NULL,
 
     PRIMARY KEY ( `id` )
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis` (
-    `id`                   VARCHAR(64)   NOT NULL,
-    `guild_id`             VARCHAR(64)   NOT NULL,
-    `name`                 VARCHAR(32)   NOT NULL,
-    `is_animated`          BOOLEAN       NOT NULL,
-    `user_id`              VARCHAR(64)   NOT NULL,
+    `id`                   BIGINT UNSIGNED    NOT NULL,
+    `guild_id`             BIGINT UNSIGNED    NOT NULL,
+    `name`                 VARCHAR(32)        NOT NULL,
+    `is_animated`          BOOLEAN            NOT NULL,
+    `user_id`              BIGINT UNSIGNED    NOT NULL,
 
     PRIMARY KEY ( `id` ),
 
@@ -87,9 +87,9 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis` (
 );
 
 CREATE TABLE IF NOT EXISTS `emojicord_db`.`users__discord_emojis` (
-    `user_id`      VARCHAR(64)   NOT NULL,
-    `emoji_id`     VARCHAR(64)   NOT NULL,
-    `is_enabled`   BOOLEAN       NOT NULL,
+    `user_id`       BIGINT UNSIGNED    NOT NULL,
+    `emoji_id`      BIGINT UNSIGNED    NOT NULL,
+    `is_enabled`    BOOLEAN            NOT NULL,
 
     PRIMARY KEY ( `user_id`, `emoji_id` ),
 
