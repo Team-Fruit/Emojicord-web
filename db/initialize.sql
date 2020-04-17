@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `emojicord_db`.`discord_emojis` (
     `name`                 VARCHAR(32)        NOT NULL,
     `is_animated`          BOOLEAN            NOT NULL,
     `user_id`              BIGINT UNSIGNED    NOT NULL,
+    `is_deleted`           BOOLEAN            NOT NULL DEFAULT 0,
 
     PRIMARY KEY ( `id` ),
 
