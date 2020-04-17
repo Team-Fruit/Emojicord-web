@@ -28,6 +28,7 @@ type (
 		GetUserEmojis(userid uint64) ([]*Emoji, error)
 		GetEmojiUsers(userid uint64) ([]*EmojiUser, error)
 		UpdateUserEmojis(obj UpdateEmojis) (err error)
+		UpdateEmojiIfNotExists(guildid string, emojiids []string) (err error)
 	}
 )
 

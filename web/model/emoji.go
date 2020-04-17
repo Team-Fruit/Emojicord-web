@@ -58,7 +58,7 @@ func (m *model) AddEmojis(emojis []*discord.Emoji) (err error) {
 			return
 		}
 
-		_, err = tx.Exec(`INSERT INTO discord_emojis
+		_, err = tx.Exec(`INSERT INTO discord_emojis (id, guild_id, name, is_animated, user_id)
 						VALUES (?, ?, ?, ?, ?)
 						ON DUPLICATE KEY UPDATE
 						user_id = VALUES(user_id),
@@ -137,7 +137,8 @@ func (m *model) GetUserEmojis(userid uint64) ([]*Emoji, error) {
 									FROM discord_emojis 
 									INNER JOIN users__discord_emojis 
 									ON discord_emojis.id = users__discord_emojis.emoji_id 
-									WHERE users__discord_emojis.user_id = ?`, userid); err != nil {
+									WHERE users__discord_emojis.user_id = ?
+									AND discord_emojis.is_deleted = 0`, userid); err != nil {
 		return nil, err
 	}
 	return emojis, nil
@@ -166,6 +167,19 @@ func (m *model) UpdateUserEmojis(obj UpdateEmojis) (err error) {
 	query, args, err = sqlx.In(query, args...)
 	if err != nil {
 		return err
+	}
+
+	query = m.db.Rebind(query)
+	_, err = m.db.Exec(query, args...)
+	return
+}
+
+func (m *model) UpdateEmojiIfNotExists(guildid string, emojiids []string) (err error) {
+	query, args, err := sqlx.In(`UPDATE discord_emojis SET is_deleted = true WHERE id IN (
+								SELECT id FROM discord_emojis WHERE guild_id = ? AND id NOT IN (?))`, guildid, emojiids)
+								
+	if err != nil {
+		return err;
 	}
 
 	query = m.db.Rebind(query)

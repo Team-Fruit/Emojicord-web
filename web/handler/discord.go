@@ -88,14 +88,24 @@ func (h *handler) EmojisUpdate(s *discordgo.Session, e *discordgo.GuildEmojisUpd
 		return
 	}
 
-		emojis, err := h.Bot.GetEmojis(id)
-		if err != nil {
-			fmt.Println("Failed to add get emoji", err)
-			return
-		}
+	emojis, err := h.Bot.GetEmojis(id)
+	if err != nil {
+		fmt.Println("Failed to add get emoji", err)
+		return
+	}
 
-		if err := h.Model.AddEmojis(emojis); err != nil {
-			fmt.Println("Failed to add emoji", err)
-			return
-		}
+	emojiids := make([]string, len(e.Emojis))
+	for i := range e.Emojis {
+		emojiids[i] = e.Emojis[i].ID
+	}
+
+	if err := h.Model.UpdateEmojiIfNotExists(e.GuildID, emojiids); err != nil {
+		fmt.Println("Failed to update deleted emoji", err)
+		return
+	}
+
+	if err := h.Model.AddEmojis(emojis); err != nil {
+		fmt.Println("Failed to add emoji", err)
+		return
+	}
 }
