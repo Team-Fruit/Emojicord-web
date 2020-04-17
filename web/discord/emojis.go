@@ -39,19 +39,3 @@ func (b *bot) GetEmojis(guildid uint64) ([]*Emoji, error) {
 
 	return emojis, nil
 }
-
-func (b *bot) GetEmoji(guildid uint64, emojiid string) (*Emoji, error) {
-	body, err := b.get("/guilds/" + strconv.FormatUint(guildid, 10) + "/emojis/" + emojiid)
-	if err != nil {
-		return nil, err
-	}
-
-	var emoji Emoji
-	if err = json.Unmarshal(body, &emoji); err != nil {
-		return nil, err
-	}
-
-	emoji.GuildID = guildid
-
-	return &emoji, nil
-}

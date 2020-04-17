@@ -88,7 +88,6 @@ func (h *handler) EmojisUpdate(s *discordgo.Session, e *discordgo.GuildEmojisUpd
 		return
 	}
 
-	if len(e.Emojis) > 1 {
 		emojis, err := h.Bot.GetEmojis(id)
 		if err != nil {
 			fmt.Println("Failed to add get emoji", err)
@@ -99,17 +98,4 @@ func (h *handler) EmojisUpdate(s *discordgo.Session, e *discordgo.GuildEmojisUpd
 			fmt.Println("Failed to add emoji", err)
 			return
 		}
-	} else {
-		emoji, err := h.Bot.GetEmoji(id, e.Emojis[0].ID)
-		if err != nil {
-			fmt.Println("Failed to add get emoji", err)
-			return
-		}
-
-		if err := h.Model.AddEmoji(emoji); err != nil {
-			fmt.Println("Failed to add emoji", err)
-			return
-		}
-
-	}
 }
