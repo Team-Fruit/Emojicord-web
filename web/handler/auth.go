@@ -60,7 +60,7 @@ func (h *handler) Auth(c echo.Context) error {
 	}
 	c.SetCookie(cookie)
 
-	url := config.AuthCodeURL(state, oauth2.SetAuthURLParam("response_type", "code"))
+	url := config.AuthCodeURL(state, oauth2.SetAuthURLParam("response_type", "code"), oauth2.SetAuthURLParam("prompt", "none"))
 	return c.Redirect(http.StatusSeeOther, url)
 }
 
